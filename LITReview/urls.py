@@ -15,7 +15,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+import webapp.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', webapp.views.LoginPage.as_view(), name='login'),
+    # template_name='webapp/login.html',
+    # redirect_authenticated_user=True
+    path('signup/', webapp.views.signup_page, name='signup'),
+    path('flux/', webapp.views.flux, name='flux'),
+    path('cover/upload/', webapp.views.cover_upload, name='cover_upload'),
+    path('subscribers/', webapp.views.subscribers, name='subscribers'),
+    path('posts/', webapp.views.posts, name='posts'),
+    # path('tickets/', views.create_ticket, name='ticket),
+    # path('critics/', views.critic_create),
+    # path('critics_answer/', views.critic_response),
+    # path('own-posts/', views.view_own_post),
+    # path('critic-modify/', views.critic_modify),
+    # path('ticket-modify/', views.ticket_modify),
+    path('logout/', webapp.views.LogoutPage.as_view(), name='logout'),
+
 ]

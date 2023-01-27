@@ -16,7 +16,7 @@
                     <li><a href="{% url 'signup' %}">S'inscrire</a></li>
                 {% elif user.is_authenticated %}
                     <li><a href="{% url 'flux' %}">Flux</a></li>
-                    <li><a href="{% url 'posts' %}">Post</a></li>
+                    <li><a href="{% url 'post_tickets' %}">Post</a></li>
                     <li><a href="{% url 'subscribers' %}">Abonnés</a></li>
                     <li>Bonjour {{ request.user }}</li>
                     <li><a href="{% url 'logout' %}">Se deconnecter</a></li>

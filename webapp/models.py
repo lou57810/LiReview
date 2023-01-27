@@ -10,8 +10,13 @@ class User(AbstractUser):
 
 class Ticket(models.Model):
     # Your Ticket model definition goes here
-    title = models.CharField(max_length=50)
-    description = models.TextField()
+    title = models.CharField(max_length=128)
+    description = models.TextField(max_length=2048, blank=True)
+    edition_date = models.DateTimeField(auto_now_add=True)
+
+    # user
+    # image
+    # time_created
 
 
 class Review(models.Model):
@@ -36,4 +41,4 @@ class UserFollows(models.Model):
     class Meta:
         # ensures we don't get multiple UserFollows instances
         # for unique user-user_followed pairs
-        unique_together = ('username', 'followed_user', )
+        unique_together = ('username', 'followed_user',)

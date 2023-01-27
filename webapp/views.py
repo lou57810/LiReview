@@ -2,14 +2,15 @@ from django.views.generic import View
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.views.generic import View
 from django.shortcuts import render, redirect
 from . import forms, models
 from webapp.models import Ticket
+from webapp.forms import TicketForm
 
 
 @login_required
 def flux(request):
+
     return render(request, 'webapp/flux.html')
 
 
@@ -74,19 +75,20 @@ def subscribers(request):
     return render(request, 'webapp/subscribers.html')
 
 
-def posts(request):
-    return render(request, 'webapp/posts.html')
+def post_tickets(request):
+    if request.method == "GET":
+        form = TicketForm()
+        return render(request, 'webapp/flux.html', context={'form': form})
+    elif request.method == "POST":
+        form = TicketForm(request.POST)
+        if form.is_valid():
+            ticket = form.save()
+            return redirect('webapp/flux')
 
 
-def create_ticket(request):
-    form = TicketForm()
-    return render(request, 'add_ticket.html', {'form': form})
-
-
-def list_ticket(request):
+def list_tickets(request):
     tickets = Ticket.objects.all()
-    return render(request, 'list_tickets.html', {'tickets': tickets})
-
+    return render(request, 'webapp/list_tickets.html', context={'tickets': tickets})
 
 
 def critic_create(request):

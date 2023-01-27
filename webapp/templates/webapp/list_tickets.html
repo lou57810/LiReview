@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+Ici on aura nos articles
+
+    <ul>
+        {% if tickets %}
+            {% for ticket in tickets %}
+                <li>{{ ticket.title }}</li>
+                <li>{{ ticket.description }}</li>
+
+            {% endfor %}
+        {% else %}
+            <span class="text-danger">Aucun Ticket.</span>
+        {% endif %}
+    </ul>
+
+{% endblock %}

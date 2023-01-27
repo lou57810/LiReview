@@ -24,10 +24,11 @@ urlpatterns = [
     # redirect_authenticated_user=True
     path('signup/', webapp.views.signup_page, name='signup'),
     path('flux/', webapp.views.flux, name='flux'),
+    path('post_tickets/', webapp.views.post_tickets, name='post_tickets'),
     path('cover/upload/', webapp.views.cover_upload, name='cover_upload'),
     path('subscribers/', webapp.views.subscribers, name='subscribers'),
-    path('posts/', webapp.views.posts, name='posts'),
-    # path('tickets/', views.create_ticket, name='ticket),
+    path('list_tickets/', webapp.views.list_tickets, name='list_tickets'),
+    # path('posts/', webapp.views.posts, name='posts'),
     # path('critics/', views.critic_create),
     # path('critics_answer/', views.critic_response),
     # path('own-posts/', views.view_own_post),

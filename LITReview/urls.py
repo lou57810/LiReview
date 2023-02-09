@@ -1,39 +1,36 @@
-"""LITReview URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 import webapp.views
+from webapp.views import flow_view, ask_review, owner_post_view
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', webapp.views.LoginPage.as_view(), name='login'),
-    # template_name='webapp/login.html',
-    # redirect_authenticated_user=True
-    path('signup/', webapp.views.signup_page, name='signup'),
-    path('flux/', webapp.views.flux, name='flux'),
-    path('post_tickets/', webapp.views.post_tickets, name='post_tickets'),
-    path('cover/upload/', webapp.views.cover_upload, name='cover_upload'),
-    path('subscribers/', webapp.views.subscribers, name='subscribers'),
-    path('list_tickets/', webapp.views.list_tickets, name='list_tickets'),
-    # path('posts/', webapp.views.posts, name='posts'),
-    # path('critics/', views.critic_create),
-    # path('critics_answer/', views.critic_response),
-    # path('own-posts/', views.view_own_post),
-    # path('critic-modify/', views.critic_modify),
-    # path('ticket-modify/', views.ticket_modify),
-    path('logout/', webapp.views.LogoutPage.as_view(), name='logout'),
+    # path('', LoginView.as_view(template_name='webapp/login.html',
+    # redirect_authenticated_user=True), name='login'),
 
+    path('signup/', webapp.views.signup_page, name='signup'),
+    path('flow/', webapp.views.flow_view, name='flow'),
+    path('ask-reviews/', webapp.views.ask_review, name='ask-reviews'),  # Demande ticket
+    path('view-tickets', webapp.views.owner_post_view, name='view-tickets'),          # Affichage post utilisateur.
+    path('create-reviews/', webapp.views.create_review, name='create-reviews'),
+    # path('update-tickets/', TicketUpdateView.as_view(), name='update-tickets'),
+    #path('cover/upload/', webapp.views.cover_upload, name='cover_upload'),
+    path('subscribers/', webapp.views.subscribers, name='subscribers'),
+    #path('delete_ticket/<int:ticket_id>', webapp.views.delete_ticket, name='delete_ticket'),
+    #path('add-reviews/', login_required(webapp.views.AddReview.as_view()), name ='add-reviews'),
+    # path('critics_answer/', views.critic_response),
+
+    # path('critic-modify/', views.critic_modify),
+    #path('view_ticket/<int:ticket_id>', webapp.views.view_tickets, name='view_ticket'),
+    path('logout/', webapp.views.LogoutPage.as_view(), name='logout'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

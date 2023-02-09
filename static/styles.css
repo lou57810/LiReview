@@ -27,11 +27,11 @@ body {
     cursor: pointer;
     }
 
-.navbar, ul {
+.navbar ul {
     float: right;
     }
 
-.navbar, li {
+.navbar li {
      display: inline-block;
      list-style: none;
      }
@@ -49,38 +49,65 @@ body {
     transition: all 0.4s ease 0s;
     }
 
-.container h2 {
+.container {
+    padding-top: 50px;
+    height: 100%;
+
+}
+
+.container, h2, h3 {
     text-align: center;
 }
 
-.container .containerFlux1 {
+.container .container_button {
+    height: 100px;
+}
+
+.container_button ul {
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+    height: 95px;
     display: flex;
-    justify-content: center;
-    padding: 100px;
+    padding: 50px;
+}
+.main {
+text-align: left;}
+
+/*
+.container, .ticket-list {
+    width: 100%;
+    height: 100%;
+    color: black;
+}
+
+.container .ticket-list ul {
+
+}
+
+.container .ticket-list li {
+    display: inline;
+    color: black;
+}
+*/
+/* =========== page list_ticket =============*/
+/*
+.container .container_list {
+    margin: auto;
+    width: 1000px;
+    height: 300px;
+    border: 2px solid green;
+  }
+
+.container .container_list ul {
+    list-style-type: none;
+    padding-top: 50px;
+    height: 80px;
     }
 
-.container .containerFlux1 button {
-    padding: 20px;
-    font-size: 20px;
-    width: 300px;
-
+.container .container_list ul li {
+    color: black;
+    height: 30px;
     }
 /*
-.container .containerFlux1 .loginLeft {
-    margin-right: 200px;
-    width: 40%;
-    font-size: 30px;
-    }
-
-.container .containerFlux1 .loginRight {
-    margin-right: 200px;
-    width: 40%;
-    font-size: 30px;
-    }
 */
-.container .containerFlux2 {
-    padding: 20px;
-    display: flex;
-    position: relative;
-    padding: 100px;
-    }

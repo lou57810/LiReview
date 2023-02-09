@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+<p>Créer une critique originale</p>
+<br/><br/>
+        <form method="POST">
+        {{ form.as_p }}
+        {{ review.as_p }}
+        {% csrf_token %}
+        <!--<button class="btn btn-secondary">Envoyer</button>-->
+        <input type="submit">
+        </form>
+<p>Image</p>
+<button type="submit" >Télécharger fichier</button>
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container_list">
+    <h4>Vos Posts</h4>
+
+            <h2>{{ ticket.title }}</h2>
+
+
+    <p>{{ ticket.content }}</p>
+
+</div>
+<div class="container_flux">
+    <ul>
+        <!--<li><a href="{#% url 'update-tickets' %}"><button class="btn btn-secondary">Modifier</button></a></li>-->
+        <li><a href="#"><button class="btn btn-secondary">Supprimer</button></a></li>
+    </ul>
+</div>
+
+
+
+
+
+{% endblock %}

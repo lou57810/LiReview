@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+from django.contrib.auth import get_user_model
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -114,11 +116,12 @@ STATICFILES_DIRS = [BASE_DIR, 'static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# AUTH_USER_MODEL = 'webapp.User'
 AUTH_USER_MODEL = 'webapp.User'
 
 LOGIN_URL = 'login'
 
-LOGIN_REDIRECT_URL = 'flux'
+LOGIN_REDIRECT_URL = 'flow'
 LOGOUT_REDIRECT_URL = LOGIN_URL
 
 MEDIA_URL = '/media/'

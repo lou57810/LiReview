@@ -1,4 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Page Abonnés</h2>
-{% endblock content %}
+<h2>Onglet d'abonnements</h2>
+
+<br/><br/>
+        <form method="POST">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <input type="submit">
+        {% for user in followed_users %}
+                <tr>
+                        <td class="user-followed"><p>{{ user.followed_user }}</p></td>
+
+                </tr>
+        </form>
+
+
+</div>{% endblock content %}

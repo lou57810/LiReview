@@ -116,7 +116,7 @@ STATICFILES_DIRS = [BASE_DIR, 'static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# AUTH_USER_MODEL = 'webapp.User'
+# AUTH_USER_MODEL = 'webapp.UserFollows'
 AUTH_USER_MODEL = 'webapp.User'
 
 LOGIN_URL = 'login'

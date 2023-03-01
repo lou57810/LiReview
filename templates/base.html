@@ -31,7 +31,7 @@
 
                 {% elif user.is_authenticated %}
                     <li><a href="{% url 'flow' %}">Flux</a></li>
-                    <li><a href="{% url 'view-tickets' %}">Posts</a></li>
+                    <li><a href="{% url 'view-posts' %}">Posts</a></li>
                     <li><a href="{% url 'subscribers' %}">Abonnés</a></li>
                     <li><a>Bonjour {{ request.user }}</a></li>
                     <li><a href="{% url 'logout' %}">Se deconnecter</a></li>

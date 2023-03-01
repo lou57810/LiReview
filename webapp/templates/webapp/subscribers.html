@@ -4,15 +4,16 @@
 
 <br/><br/>
         <form method="POST">
-        {{ form.as_p }}
-        {% csrf_token %}
-        <input type="submit">
-        {% for user in followed_users %}
-                <tr>
-                        <td class="user-followed"><p>{{ user.followed_user }}</p></td>
+        <div class="main">
+        <ul>
+            {% for instance in followers %}
+                {{ instance.follower }}
+            {% endfor %}
+        </ul>
+    </div>
+    </form>
 
-                </tr>
         </form>
 
 
-</div>{% endblock content %}
+{% endblock content %}

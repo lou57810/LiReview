@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load webapp_extras %}
 {% block content %}
 <h2>Page Flux</h2>
 
@@ -7,30 +8,27 @@
         <li><a href="{% url 'ask-reviews' %}"><button>Demander une critique</button></a></li>
         <li><a href="{% url 'create-reviews' %}"><button>Creer une critique originale</button></a></li>
     </ul>
-
 </div>
+</br></br>
 <div class="main">
     <ul>
-        {% for ticket in tickets %}
-            Ticket - {{ ticket.user }}
-            {{ ticket.title }}
-            {{ ticket.description }}
-            <small>{{ ticket.edition_date }}</small><a href="{% url 'ask-reviews' %}"><button>Créer une critique</button></a></br></br>
-        {% endfor %}
-
-        {% for review in reviews %}
-            {{ review.ticket }}
-            {{ review.rating }}
-            {{ review.user }}
-            {{ review.headline }}
-            {{ review.body }}
-            <small>{{ review.edition_date }}</small></br></br>
-        {% endfor %}
+        {% for instance in tickets_and_reviews %}
+            {% if instance|model_type == 'Ticket' %}
+                <!--Id - {%{ instance.id }}-->
+                    {{ instance.user }} : a demandé une critique:
+                    {{ instance.title }}
+                    {{ instance.description }}<a href="{% url 'response-reviews' %}"><button>créer une critique</button></a>
     </ul>
+    <ul>
+            {% elif instance|model_type == 'Review' %}
+                <!--Id - {%{ instance.id }}-->
+                     {{ instance.user }} : posted a review
+                     {{ instance.headline }}
+                     {{ instance.rating }}
+                     {{ instance.body }}
+            {% endif %}
+        {% endfor %}
+    </ul></br>
 </div>
 
 {% endblock content %}
-
-
-
-

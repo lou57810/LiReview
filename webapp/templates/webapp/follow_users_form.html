@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+    <p>Suivre d'autres utilisateurs</p></br></br>
+    <form  action="{% url 'subscribers' %}"  method="post">
+        {% csrf_token %}
+        {{ followed_form }}
+        <input type="submit" value="Envoyer">
+    </form>
+
+
+    <!--<form method="get">-->
+    <div class="main">
+        <ul>
+
+        {{ user }} suit: {{ UserFollows.unique_together }}
+        </ul>
+        <!--<ul>
+        {#% for instance in followers %}
+
+            {#{ user }} suit : {#{ instance.follower }} :  </br>
+        {#% endfor %}
+
+
+        </ul>-->
+    </div>
+
+{% endblock content %}

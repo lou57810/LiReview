@@ -2,12 +2,13 @@
 {% block content %}
 
 
-<p>Créer une critique originale</p>
+<p>Créer une critique</p>
 <br/><br/>
         <form method="POST">
-        {{ form.as_p }}
-        {{ review.as_p }}
         {% csrf_token %}
+        {{ ticket_form.as_p }}
+        {{ review_form.as_p }}
+
         <!--<button class="btn btn-secondary">Envoyer</button>-->
         <input type="submit">
         </form>

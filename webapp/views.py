@@ -3,6 +3,7 @@ from django.views.generic import View, ListView, DetailView, CreateView, UpdateV
 from django.conf import settings
 from django.forms.formsets import formset_factory
 # from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
@@ -10,12 +11,13 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from . import forms, models
 from webapp.models import Ticket, Review, UserFollows
-from webapp.forms import AskReview, TicketForm, ReviewForm,\
-     CreateResponseReview, Review, LoginForm, FollowUsersForm  # CreateOriginalReviewTop, CreateOriginalReviewBottom,
+from webapp.forms import AskReview, TicketForm, ReviewForm, \
+    CreateResponseReview, Review, LoginForm, FollowUsersForm  # CreateOriginalReviewTop, CreateOriginalReviewBottom,
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.http import HttpResponse
+from webapp.admin import UserFollowsAdmin
 
 
 # ================== LOGIN =========================================
@@ -67,59 +69,121 @@ def signup_page(request):
 
 @login_required
 def flow_view(request):
-    tickets = models.Ticket.objects.all() #  filter(
-        # Q(contributors__in=request.user.followed_user.all()) |
-        # Q(starred=True)
-    #)
-    reviews = models.Review.objects.all() # filter(
-        # uploader__in=request.user.followed_user.all()
-    # ).exclude(blog__in=tickets)
+    user_id = request.user.id
+    followed_users = UserFollows.objects.filter(user=user_id)
+    str_followed_users = []
+    for user in followed_users:
+        str_followed_users.append(str(user.followed_user))
 
-    tickets_and_reviews = sorted(chain(tickets, reviews),
-                                 key=lambda instance: instance.time_created,
-                                 reverse=True)
-    return render(request, 'webapp/flow.html', context={'tickets_and_reviews': tickets_and_reviews})
+    print(models.UserFollows.objects.filter(user=request.user).values())
+    print('str:', str_followed_users)
+
+    tickets = models.Ticket.objects.order_by('-time_created')
+    reviews = models.Review.objects.order_by('-time_created')
+    tickets_and_reviews = []
+
+    for ticket in tickets:
+        if str(ticket.user) in str_followed_users or str(ticket.user) == str(request.user):
+            for review in reviews:
+                if ticket == review.ticket:
+                    ticket.done = True
+            tickets_and_reviews.append(ticket)
+
+    for review in reviews:
+        if str(review.user) in str_followed_users or str(review.user) == str(request.user):
+            tickets_and_reviews.append(review)
+
+    ordered_tickets_and_reviews = sorted(tickets_and_reviews,
+                                         key=lambda instance: instance.time_created,
+                                         reverse=True)
+    return render(request, 'webapp/flow.html', context={'ordered_tickets_and_reviews': ordered_tickets_and_reviews})
 
 
 @login_required
-def ask_review(request):                # Bouton demander une critique
-    # form = forms.AskReview()
+def ask_review(request, ticket_id=None):  # Bouton demander une critique
+    ticket_instance = (
+        Ticket.objects.get(pk=ticket_id) if ticket_id is not None else None)
+
     if request.method == "GET":
-        form = forms.AskReview()
+        form = forms.AskReview(instance=ticket_instance)
         return render(request, 'webapp/ask_review.html', context={'form': form})
     if request.method == "POST":
         form = forms.AskReview(request.POST)
         if form.is_valid():
-            form.save()
+            new_ticket = form.save(commit=False)
+            new_ticket.user = request.user
+            new_ticket.save()
             return redirect('flow')
-
-    # return render(request, 'webapp/ask_review.html', context={'form': form})
 
 
 @login_required
 def create_original_review(request):
-    # ticket = get_object_or_404(models.Ticket, id=review_id)
-    ticket_form = forms.TicketForm()
-    review_form = forms.ReviewForm()
-    if request.method =='POST':
+
+    if request.method == "GET":
+        ticket_form = forms.TicketForm()
+        review_form = forms.ReviewForm()
+        return render(request, 'webapp/original_review.html',
+                      context={'ticket_form': ticket_form, 'review_form': review_form})
+
+    if request.method == "POST":
+        ticket_form = forms.TicketForm(request.POST)
+        if ticket_form.is_valid():
+            post = ticket_form.save(commit=False)
+            post.user = request.user
+            post.time_created = timezone.now()
+            post.save()
+
+            reviews_form = forms.ReviewForm(request.POST)
+            reviews_ticket = Ticket.objects.get(id=post.id)
+            post = reviews_form.save(commit=False)
+            post.ticket = reviews_ticket
+            post.user = request.user
+            post.time_created = timezone.now()
+            post.save()
+            return redirect('flow')
+
+
+"""
+@login_required
+def create_original_review(request, ticket_id=None):
+    original_ticket_instance = (
+        Review.objects.get(pk=ticket_id) if ticket_id is not None else None)
+    if request.method == "GET":
+        ticket_form = forms.TicketForm(instance=original_ticket_instance)
+        review_form = forms.ReviewForm()
+        return render(request, 'webapp/original_review.html',
+                      context={'ticket_form': ticket_form, 'review_form': review_form})
+
+    elif request.method == 'POST':
         ticket_form = forms.TicketForm(request.POST)
         review_form = forms.ReviewForm(request.POST)
         if all([ticket_form.is_valid(), review_form.is_valid()]):
             ticket = ticket_form.save(commit=False)
+            ticket.user = request.user
             ticket.save()
             review = review_form.save(commit=False)
+            review.user = request.user
             review.ticket = ticket
             review.save()
-            return redirect('response-reviews')
-
-    return render(request, 'webapp/original_review.html',
-                  context={'ticket_form': ticket_form, 'review_form': review_form})
-
+            return redirect('flow')
+"""
 
 @login_required
-def create_response_review(request):
-    ticket_form = forms.TicketForm()
-    review_form = forms.ReviewForm()
+def create_response_review(request, review_id=None, ticket_id=None):
+    review_instance = (
+        Review.objects.get(pk=review_id) if review_id is not None else None
+    )
+    ticket_instance = (
+        Ticket.objects.get(pk=ticket_id) if ticket_id is not None else None
+    )
+
+    if request.method == "GET":
+        ticket_form = forms.TicketForm(instance=ticket_instance)  # , initial={"ticket": ticket_instance})
+        review_form = forms.ReviewForm(instance=review_instance)  # , initial={"review": review_instance})
+        context = {"ticket_form": ticket_form, "review_form": review_form}
+        return render(request, 'webapp/response_review.html',
+                      context=context)
+
     if request.method == 'POST':
         ticket_form = forms.TicketForm(request.POST)
         review_form = forms.ReviewForm(request.POST)
@@ -127,87 +191,65 @@ def create_response_review(request):
             ticket = ticket_form.save(commit=False)
             ticket.save()
             review = review_form.save(commit=False)
-            review.ticket = ticket
+            # review.ticket = ticket
+            name = request.user
+            print('user: ', name)
             review.save()
             return redirect('flow')
-
-    return render(request, 'webapp/response_review.html',
-                  context={'ticket_form': ticket_form, 'review_form': review_form})
 
 
 @login_required
 def owner_post_view(request):
-    # tickets = models.Ticket.objects.all()
-    # reviews = models.Review.objects.all()
-    # if request.method == "GET":
-    tickets = models.Ticket.objects.filter(user=request.user)
-    reviews = models.Review.objects.filter(user=request.user)
+    tickets = models.Ticket.objects.filter(user=request.user).order_by('-time_created')
+    reviews = models.Review.objects.filter(user=request.user).order_by('-time_created')
     # redirect('view-posts')
     return render(request, "webapp/view_posts.html", {'tickets': tickets, 'reviews:': reviews})
 
 
 @login_required
 def add_follower(request):
-    # users = models.User.objects.all()
-    if request.method == 'GET':
+    user_id = request.user.id
+    followed_model_users = models.UserFollows.objects.filter(user=user_id)
+    following_model_users = UserFollows.objects.filter(followed_user=user_id)
+
+    follower_users = []
+    followed_users = []
+    for user in followed_model_users:
+        followed_users.append(user)
+    for user in following_model_users:
+        follower_users.append(user)
+
+    if request.method == "GET":
         followed_form = FollowUsersForm()
-        return render(request, 'webapp/follow_users_form.html', {'followed_form': followed_form})
+        return render(request, 'webapp/follow_users_form.html',
+                      {'followed_users': followed_users, 'followed_form': followed_form, 'follower_users': follower_users})
 
-    elif request.method == 'POST':
+    elif request.method == "POST":
         followed_form = FollowUsersForm(request.POST)
-
         if followed_form.is_valid():
+            new_followed_user = followed_form.cleaned_data['followed_user']
             user = request.user
-            user_followed = followed_form.cleaned_data['followed_user']
-            # follower = models.User.objects.filter(username=user)
-            UserFollows.unique_together = (user.username, user_followed.username)
-            print('uniquetogether:', UserFollows.unique_together)
-            # UserFollows.unique_together.save()
+            # Exception: " didn't return an HttpResponse object. It returned None instead"
+            # new_followed_user = followed_form.save(commit=False)
+            # new_followed_user.user = request.user
+
+            print('user:', user)
+            print('new_followed_user:', new_followed_user)
+
+            follow_relations = UserFollows(user=user, followed_user=new_followed_user)
+            follow_relations.save()
+
             return redirect('subscribers')
-    """
-    user = models.User.objects.filter(username=follower)
-    # post = UserFollows.objects.create(user=follower)
 
-    # unique_together.save()
-    user = request.user
-    UserFollows.unique_together = (user.username, follower)
-    print('uniquetogether:', UserFollows.unique_together)
-    print('u0:', UserFollows.unique_together[1])
 
-    # usr_follow_tuple.follower = follower.username
-
-    # follower = followed_form.save()
-
-    # print('follower:', request.user )
-    
-    # return HttpResponse(follower)
-    """
-
-    # followers = models.UserFollows.objects.all()
-    # followed_form = forms.FollowUsersForm(request.POST)
-    # return render(request, 'webapp/follow_users_form.html', {'followers': followers, 'followed_form': followed_form})
+@login_required
+def unfollow(request, user_id):
+    post = get_object_or_404(UserFollows, id=user_id)
+    post.followed_user.delete()
+    return redirect('subscribers')
 
 
 """
-    if request.method == 'POST':
-        followed_form = forms.FollowUsersForm(request.POST)
-        if followed_form.is_valid():
-            followed_name = followed_form.cleaned_data['user_name']
-            follower = UserFollows.objects.create(user_name=followed_name)
-            follower.save()
-            return HttpResponse('Username:' + follower.followed_name)
-            #user = followed_form.save(commit=False)
-            # follower.save()
-            #print("user:\n", user)
-            # unique_together.save()
-            # print('unique_together:', unique_together)
-            #return redirect('subscribers')
-    followed_form = FollowUsersForm()
-    return render(request, 'webapp/follow_users_form.html', {'followed_form': followed_form})
-    #return render(request, 'webapp/follow_users_form.html',
-                  #context={'user': user, 'followers': followers, 'followed_form': followed_form})
-"""
-
 @login_required
 def modify_review(request, review_id):
     review = Review.objects.get(id=review_id)
@@ -226,11 +268,9 @@ def modify_review(request, review_id):
                   'webapp/modify_review.html',
                   {'review_modify_form': review_modify_form})
 
+"""
+
 
 @login_required
 def delete_tickets(request, ticket_id):
     pass
-
-
-
-

@@ -8,20 +8,28 @@
     </form>
 
 
+
+
+
     <!--<form method="get">-->
     <div class="main">
         <ul>
+            {% for instance in followed_users %}
 
-        {{ user }} suit: {{ UserFollows.unique_together }}
+                    {{ user }} suit:
+                    {{ instance.followed_user }}<a href="{% url 'unfollow' user_id=user.id %}"><button>Désabonner</button></a></br>
+
+            {% endfor %}
         </ul>
-        <!--<ul>
-        {#% for instance in followers %}
+        <ul>
+        {% for user in follower_users %}
 
-            {#{ user }} suit : {#{ instance.follower }} :  </br>
-        {#% endfor %}
+              {{ user.user }}   </br>
+        {% endfor %}
 
 
-        </ul>-->
+        </ul>
+
     </div>
 
 {% endblock content %}

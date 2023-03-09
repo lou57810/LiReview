@@ -18,6 +18,7 @@ urlpatterns = [
     path('create-reviews/', webapp.views.create_original_review, name='create-reviews'),
     path('response-reviews/', webapp.views.create_response_review, name='response-reviews'),
     path('subscribers/', webapp.views.add_follower, name='subscribers'),
+    path('subscribers/<int:user_id>', webapp.views.unfollow, name='unfollow'),
     path('delete-tickets/<int:ticket_id>', webapp.views.delete_tickets, name='delete-tickets'),
 
     # path('critic-modify/', views.critic_modify),

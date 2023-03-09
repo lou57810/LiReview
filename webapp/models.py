@@ -1,15 +1,18 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User, AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+
+
 # import uuid
 
 
 class User(AbstractUser):
-    USER = 'USER'
+    pass
+
 """
     
     CREATOR = "CREATOR"
@@ -32,6 +35,7 @@ class Ticket(models.Model):
     description = models.TextField(max_length=2048, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+
     # user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     # image
 
@@ -64,10 +68,10 @@ class UserFollows(models.Model):
     # Your UserFollows model definition goes here
     user = models.ForeignKey(
         to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-        related_name='following', null=True, blank=True)
+        related_name='following')
     followed_user = models.ForeignKey(
         to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-        related_name='followed_by', null=True, blank=True)
+        related_name='followed_by')
 
     class Meta:
         # ensures we don't get multiple UserFollows instances
@@ -75,8 +79,7 @@ class UserFollows(models.Model):
         unique_together = ('user', 'followed_user',)
 
     def __str__(self):
+        # return str(followed_user)
         return '{} follows  {}'.format(self.user, self.followed_user)
-
-
 
 

@@ -11,24 +11,27 @@
 </div>
 </br></br>
 <div class="main">
-    <ul>
-        {% for instance in tickets_and_reviews %}
-            {% if instance|model_type == 'Ticket' %}
-                <!--Id - {%{ instance.id }}-->
-                    {{ instance.user }} : a demandé une critique:
-                    {{ instance.title }}
-                    {{ instance.description }}<a href="{% url 'response-reviews' %}"><button>créer une critique</button></a>
-    </ul>
-    <ul>
-            {% elif instance|model_type == 'Review' %}
-                <!--Id - {%{ instance.id }}-->
-                     {{ instance.user }} : posted a review
-                     {{ instance.headline }}
-                     {{ instance.rating }}
-                     {{ instance.body }}
-            {% endif %}
-        {% endfor %}
-    </ul></br>
+    <div class = row >
+        <ul>
+            {% for instance in ordered_tickets_and_reviews %}
+                {% if instance|model_type == 'Ticket' %}
+                    <!--Id - {%{ instance.id }}-->
+                        {{ instance.user }} : a demandé une critique:
+                        {{ instance.title }}
+                        {{ instance.description }}
+                        {{ instance.time_created }}<a href="{% url 'response-reviews' %}"><button>créer une critique</button></a>
+        </ul>
+        <ul>
+                {% elif instance|model_type == 'Review' %}
+                    <!--Id - {%{ instance.id }}-->
+                         {{ instance.user }} : posted a review
+                         {{ instance.headline }}
+                         {{ instance.rating }}
+                         {{ instance.body }}
+                {% endif %}
+            {% endfor %}
+        </ul></br>
+    </div>
 </div>
 
 {% endblock content %}

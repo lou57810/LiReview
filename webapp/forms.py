@@ -52,36 +52,16 @@ class CreateResponseReview(ModelForm):
 
 
 class FollowUsersForm(ModelForm):
-    # follower = forms.CharField(label='',
-                           # widget=forms.TextInput(attrs={'placeholder': "Nom d'utilisateur"}),
-                           # required=True)
+    # followed_user = forms.CharField(label='',
+    # widget=forms.TextInput(attrs={'placeholder': "Nom d'utilisateur"}),
+    # required=True)
 
     class Meta:
-        model = UserFollows
+        model = models.UserFollows
         fields = ['followed_user']
-
-    """
-    class Meta:
-        model = models.UserFollows
-        fields = ['user', ]
-        widgets = {
-            'Follow': forms.TextInput(attrs={"placeholder": "Nom d'utilisateur"}), }
-    """
-
-    """
-    class Meta:
-        model = models.UserFollows
-        fields = ['follower']
-
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop("request")
-        super().__init__(*args, **kwargs)
-
-    def save(self, commit=True):
-        self.instance.user = self.request.user
-        return super().save(commit)
-
-    """
+        # labels = {'followed_user': ' ', }       # 'Suivre d'autres utilisateurs'
+        # widgets = {'followed_user': forms.TextInput(
+        # attrs={'class': 'form-control', 'placeholder': "Nom d'utilisateur"})}
 
 
 class DeleteTicketForm(ModelForm):

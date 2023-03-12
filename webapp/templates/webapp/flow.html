@@ -10,24 +10,25 @@
     </ul>
 </div>
 </br></br>
-<div class="main">
-    <div class = row >
+<div class="container">
+    <div class = container_list >
         <ul>
             {% for instance in ordered_tickets_and_reviews %}
                 {% if instance|model_type == 'Ticket' %}
-                    <!--Id - {%{ instance.id }}-->
-                        {{ instance.user }} : a demandé une critique:
-                        {{ instance.title }}
-                        {{ instance.description }}
-                        {{ instance.time_created }}<a href="{% url 'response-reviews' %}"><button>créer une critique</button></a>
+                <!--Id - {%{ instance.id }}-->
+                    {{ instance.user }} : a demandé une critique:
+                    {{ instance.title }}
+                    {{ instance.description }}
+                    {{ instance.time_created }}<a href=
+                          "{% url 'response-reviews' ticket_id=instance.id %}"><button>créer une critique</button></a>
         </ul>
         <ul>
                 {% elif instance|model_type == 'Review' %}
-                    <!--Id - {%{ instance.id }}-->
-                         {{ instance.user }} : posted a review
-                         {{ instance.headline }}
-                         {{ instance.rating }}
-                         {{ instance.body }}
+                <!--Id - {%{ instance.id }}-->
+                     {{ instance.user }} : posted a review
+                     {{ instance.headline }}
+                     {{ instance.rating }}
+                     {{ instance.body }}
                 {% endif %}
             {% endfor %}
         </ul></br>

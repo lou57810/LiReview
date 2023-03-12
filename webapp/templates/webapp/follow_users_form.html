@@ -5,31 +5,34 @@
         {% csrf_token %}
         {{ followed_form }}
         <input type="submit" value="Envoyer">
-    </form>
+        <!--<button class="btn btn-outline-primary btn-sm" value="submit">Envoyer</button>-->
+    </form></br></br>
 
 
 
 
 
     <!--<form method="get">-->
-    <div class="main">
-        <ul>
+    <div class="follow_container">
+        <div class="container_list">
             {% for instance in followed_users %}
-
-                    {{ user }} suit:
-                    {{ instance.followed_user }}<a href="{% url 'unfollow' user_id=user.id %}"><button>Désabonner</button></a></br>
-
+            <ul>
+                {{ instance.followed_user }} <a  href=
+                             "{% url 'unfollow' user_id=user.id %}"><button>Désabonner</button></a>
+            </ul>
             {% endfor %}
-        </ul>
-        <ul>
-        {% for user in follower_users %}
+        </div>
+    </div>
+    <div class="follow_container">
+        <div class="container_list_bottom">
 
-              {{ user.user }}   </br>
-        {% endfor %}
+                {% for user in follower_users %}
+                    <ul>
+                      {{ user.user }}
+                    </ul>
+                {% endfor %}
 
-
-        </ul>
-
+        </div>
     </div>
 
 {% endblock content %}

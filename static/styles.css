@@ -72,9 +72,42 @@ body {
     padding: 50px;
 }
 .main {
-text-align: left;}
+text-align: left;
+}
 
 /*
+.stars {
+    display: flex;
+    }
+
+.stars.disabled {
+    pointer-events: none;
+    }
+
+.stars a {
+     opacity: 50%;
+     cursor: pointer;
+     padding: 5px;
+     }
+
+.stars:hover a {
+     opacity: 100%;
+     cursor: pointer;
+     }
+
+.stars a:hover {
+     opacity: 100%;
+     }
+
+.stars a:hover ~ a {
+     opacity: 50%;
+     }
+
+.stars a.active {
+     opacity: 100%;
+     }
+
+
 .container, .ticket-list {
     width: 100%;
     height: 100%;
@@ -90,24 +123,38 @@ text-align: left;}
     color: black;
 }
 */
-/* =========== page list_ticket =============*/
-/*
-.container .container_list {
-    margin: auto;
-    width: 1000px;
-    height: 300px;
-    border: 2px solid green;
+/* =========== page follow_users_form =============*/
+
+.follow_container .container_list {
+    width: 1200px;
+    height: 600px;
+
   }
 
-.container .container_list ul {
+.follow_container .container_list ul {
     list-style-type: none;
-    padding-top: 50px;
-    height: 80px;
+    padding-top: 15px;
+    height: 60px;
+    border: 2px solid black;
     }
 
+.follow_container .container_list a {
+    margin-left: 900px;
+}
+
+.follow_container .container_list_bottom ul {
+    width: 1200px;
+    text-align: left;
+    padding-left: 80px;
+    list-style-type: none;
+    padding-top: 15px;
+    height: 60px;
+    border: 2px solid black;
+
+  }
+/*
 .container .container_list ul li {
     color: black;
     height: 30px;
     }
-/*
 */

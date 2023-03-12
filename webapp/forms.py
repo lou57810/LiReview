@@ -11,10 +11,10 @@ User = get_user_model()
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(max_length=30, label='Nom d’utilisateur')
+    username = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'placeholder': "Nom d'utilisateur"}), label='')
     password = forms.CharField(max_length=30,
-                               widget=forms.PasswordInput,
-                               label='Mot de passe')
+                               widget=forms.PasswordInput(attrs={'placeholder': "Mot de passe"}),
+                               label='')
 
 
 class SignupForm(UserCreationForm):
@@ -37,22 +37,46 @@ class TicketForm(ModelForm):
         fields = ['title', 'description']
 
 
-class ReviewForm(ModelForm):
-    # edit_review = forms.BooleanField(widget=forms.HiddenInput, initial=True)
+class CreateOriginalReviewForm(ModelForm):
+    CHOICES = [
+        ('1', 'Option 1'),
+        ('2', 'Option 2'),
+        ('3', 'Option 3'),
+        ('4', 'Option 4'),
+        ('4', 'Option 4'),
+    ]
+
+    headline = forms.CharField(max_length=30, label='Titre')
+    rating = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, label="Note")
+    body = forms.CharField(label="Commentaire", widget=forms.Textarea(attrs={}))
 
     class Meta:
         model = models.Review
         fields = ['headline', 'rating', 'body']
 
 
-class CreateResponseReview(ModelForm):
+class CreateResponseReviewForm(forms.ModelForm):
+    CHOICES = [
+        ('1', 'Option 1'),
+        ('2', 'Option 2'),
+        ('3', 'Option 3'),
+        ('4', 'Option 4'),
+        ('4', 'Option 4'),
+    ]
+
+    headline = forms.CharField(max_length=30, label='Titre')
+    rating = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, label="Note")
+    body = forms.CharField(label="Commentaire", widget=forms.Textarea(attrs={}))  #     {'label': 'Commentaire'}))
+
     class Meta:
         model = models.Review
-        fields = ['ticket', 'rating', 'user', 'headline', 'body']
+        fields = ['headline', 'rating', 'body']
+        # widgets = {'Note': forms.NumberInput(attrs={'class': 'Stars'})}
+        # labels = {'Note': ''}
 
 
 class FollowUsersForm(ModelForm):
-    # followed_user = forms.CharField(label='',
+    # followed_user = forms.CharField(label='')
     # widget=forms.TextInput(attrs={'placeholder': "Nom d'utilisateur"}),
     # required=True)
 

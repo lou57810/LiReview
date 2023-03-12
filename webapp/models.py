@@ -40,7 +40,7 @@ class Ticket(models.Model):
     # image
 
     def __str__(self):
-        return self.title + ' | ' + str(self.user)
+        return self.title  # + ' | ' + str(self.user)
 
     """
     def get_absolute_url(self):
@@ -54,14 +54,14 @@ class Review(models.Model):
     rating = models.PositiveSmallIntegerField(
         # validates that rating must be between 0 and 5  ? starred = models.BooleanField(default=False)
         validators=[MinValueValidator(0), MaxValueValidator(5)])
-    headline = models.CharField(max_length=128)
+    headline = models.CharField(max_length=128, help_text='Titre')
     body = models.CharField(max_length=8192, blank=True)
     user = models.ForeignKey(
         to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.headline + ' | ' + str(self.user)
+        return self.headline  #  + ' | ' + str(self.user)
 
 
 class UserFollows(models.Model):

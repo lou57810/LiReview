@@ -11,8 +11,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from . import forms, models
 from webapp.models import Ticket, Review, UserFollows
-from webapp.forms import AskReview, TicketForm, ReviewForm, \
-    CreateResponseReview, Review, LoginForm, FollowUsersForm  # CreateOriginalReviewTop, CreateOriginalReviewBottom,
+from webapp.forms import AskReview, TicketForm, CreateOriginalReviewForm, \
+    CreateResponseReviewForm, Review, LoginForm, FollowUsersForm  # CreateOriginalReviewTop, CreateOriginalReviewBottom,
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
@@ -121,25 +121,25 @@ def create_original_review(request):
 
     if request.method == "GET":
         ticket_form = forms.TicketForm()
-        review_form = forms.ReviewForm()
+        review_form = forms.CreateOriginalReviewForm()
         return render(request, 'webapp/original_review.html',
                       context={'ticket_form': ticket_form, 'review_form': review_form})
 
     if request.method == "POST":
         ticket_form = forms.TicketForm(request.POST)
         if ticket_form.is_valid():
-            post = ticket_form.save(commit=False)
-            post.user = request.user
-            post.time_created = timezone.now()
-            post.save()
+            ticket = ticket_form.save(commit=False)
+            ticket.user = request.user
+            ticket.time_created = timezone.now()
+            ticket.save()
 
-            reviews_form = forms.ReviewForm(request.POST)
-            reviews_ticket = Ticket.objects.get(id=post.id)
-            post = reviews_form.save(commit=False)
-            post.ticket = reviews_ticket
-            post.user = request.user
-            post.time_created = timezone.now()
-            post.save()
+            reviews_form = forms.CreateOriginalReviewForm(request.POST)
+            reviews_ticket = Ticket.objects.get(id=ticket.id)
+            review = reviews_form.save(commit=False)
+            review.ticket = reviews_ticket
+            review.user = request.user
+            review.time_created = timezone.now()
+            review.save()
             return redirect('flow')
 
 
@@ -166,7 +166,6 @@ def create_original_review(request, ticket_id=None):
             review.ticket = ticket
             review.save()
             return redirect('flow')
-"""
 
 @login_required
 def create_response_review(request, review_id=None, ticket_id=None):
@@ -196,6 +195,43 @@ def create_response_review(request, review_id=None, ticket_id=None):
             print('user: ', name)
             review.save()
             return redirect('flow')
+
+"""
+
+
+def create_response_review(request, ticket_id=None):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+
+    if request.method == "GET":
+        review_form = forms.CreateResponseReviewForm()
+        return render(request, 'webapp/response_review.html', {
+            'ticket': ticket, 'review_form': review_form})
+
+    elif request.method == 'POST':
+        review_form = forms.CreateResponseReviewForm(request.POST)
+        if review_form.is_valid():
+            review = review_form.save(commit=False)
+            review.ticket = ticket
+            review.user = request.user
+            review.time_created = timezone.now()
+            review.save()
+            return redirect('flow')
+"""
+if request.method == "GET":
+    review_form = forms.CreateResponseReview()
+    
+
+elif request.method == 'POST':
+    review_form = forms.CreateResponseReview(request.POST)
+
+    if review_form.is_valid:
+        post = review_form.save(commit=False)
+        post.ticket = ticket
+        post.user = request.user
+        post.time_created = timezone.now()
+        post.save()
+"""
+    # return redirect('flow')
 
 
 @login_required

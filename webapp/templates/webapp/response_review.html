@@ -4,15 +4,20 @@
 
 <p>Créer une critique</p>
 <br/><br/>
+<p>Vous êtes en train de poster en réponse à :</p>
+        {{ ticket.user }} a demandé une critique</br>
+        {{ ticket }}
+        {{ review }}
         <form method="POST">
+                <p>Critique</p>
         {% csrf_token %}
-        {{ ticket_form.as_p }}
+
         {{ review_form.as_p }}
 
         <!--<button class="btn btn-secondary">Envoyer</button>-->
         <input type="submit">
         </form>
 <p>Image</p>
-<button type="submit" >Télécharger fichier</button>
+
 
 {% endblock %}

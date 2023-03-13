@@ -13,7 +13,7 @@ from . import forms, models
 from webapp.models import Ticket, Review, UserFollows
 from webapp.forms import AskReview, TicketForm, CreateOriginalReviewForm, \
     CreateResponseReviewForm, Review, LoginForm, FollowUsersForm  # CreateOriginalReviewTop, CreateOriginalReviewBottom,
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.http import HttpResponse
@@ -246,7 +246,7 @@ def owner_post_view(request):
 def add_follower(request):
     user_id = request.user.id
     followed_model_users = models.UserFollows.objects.filter(user=user_id)
-    following_model_users = UserFollows.objects.filter(followed_user=user_id)
+    following_model_users = models.UserFollows.objects.filter(followed_user=user_id)
 
     follower_users = []
     followed_users = []

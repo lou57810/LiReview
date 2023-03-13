@@ -13,6 +13,7 @@ from django.utils import timezone
 class User(AbstractUser):
     pass
 
+
 """
     
     CREATOR = "CREATOR"

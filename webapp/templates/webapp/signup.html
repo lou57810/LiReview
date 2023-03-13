@@ -1,12 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h2>Inscription</h2>
-    {% if form.errors %}
-        {{ form.errors }}
-    {% endif %}
-    <form method="post">
-        {{ form.as_p }}
-        {% csrf_token %}
-        <button type="submit" >S’inscrire</button>
-    </form>
+    <div class="content-section">
+        {% if form.errors %}
+            {{ form.errors }}
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Inscription</legend>
+                <p>{{ form.as_p }}</p>
+            </fieldset>
+            <div class="form-group">
+                <button class="btn-outline-info" type="submit" >S’inscrire</button>
+            </div>
+        </form>
+    </div>
 {% endblock content %}

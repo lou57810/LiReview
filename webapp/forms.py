@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
-from django.forms import ModelForm, TextInput
+from django.forms import ModelForm, TextInput, PasswordInput
 from webapp.models import User, Ticket, Review, UserFollows
 
 from . import models
@@ -18,9 +18,27 @@ class LoginForm(forms.Form):
 
 
 class SignupForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
-        model = get_user_model()
-        fields = ['username']
+    username = forms.CharField(label='', widget=forms.TextInput(attrs={'placeholder': 'Nom d\'utilisateur'}))
+    password1 = forms.CharField(label='', widget=forms.TextInput(attrs={'placeholder': 'Mot de passe'}))
+    password2 = forms.CharField(label='', widget=forms.TextInput(attrs={'placeholder': 'Confirmer Mot de passe'}))
+
+    # class Meta(UserCreationForm.Meta):
+    class Meta:
+        # model = get_user_model()
+        model = User
+        fields = ['username', 'password1', 'password2']
+        widgets = {
+            'username': forms.TextInput(attrs={
+
+                'placeholder': 'Nom d\'utilisateur',
+            }),
+            'password1': forms.PasswordInput(attrs={
+                'placeholder': "Mot de passe"
+            }),
+            'password2': forms.PasswordInput(attrs={
+                'placeholder': "Confirmer Mot de passe"
+            }),
+        }
 
 
 class AskReview(ModelForm):

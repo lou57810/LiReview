@@ -1,38 +1,43 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load webapp_extras %}
 {% block content %}
+<link rel="stylesheet" href="{% static 'flow.css' %}">
 <h2>Page Flux</h2>
 
-<div class="container_button">
-    <ul>
-        <li><a href="{% url 'ask-reviews' %}"><button>Demander une critique</button></a></li>
-        <li><a href="{% url 'create-reviews' %}"><button>Creer une critique originale</button></a></li>
-    </ul>
-</div>
-</br></br>
-<div class="container">
-    <div class = container_list >
+    <div class="container_button">
         <ul>
-            {% for instance in ordered_tickets_and_reviews %}
-                {% if instance|model_type == 'Ticket' %}
-                <!--Id - {%{ instance.id }}-->
-                    {{ instance.user }} : a demandé une critique:
-                    {{ instance.title }}
-                    {{ instance.description }}
-                    {{ instance.time_created }}<a href=
-                          "{% url 'response-reviews' ticket_id=instance.id %}"><button>créer une critique</button></a>
+            <li><a href="{% url 'create-ticket' %}"><button>Demander une critique</button></a></li>
+            <li><a href="{% url 'create-reviews' %}"><button>Creer une critique originale</button></a></li>
         </ul>
-        <ul>
-                {% elif instance|model_type == 'Review' %}
-                <!--Id - {%{ instance.id }}-->
-                     {{ instance.user }} : posted a review
-                     {{ instance.headline }}
-                     {{ instance.rating }}
-                     {{ instance.body }}
-                {% endif %}
-            {% endfor %}
-        </ul></br>
     </div>
-</div>
+    </br></br>
+<div class="article">
+    {% for instance in ordered_tickets_and_reviews %}
 
-{% endblock content %}
+            {% if instance|model_type == 'Ticket' %}
+                {% include 'webapp/partials/ticket_snippets.html' with ticket=instance %}
+            {% elif instance|model_type == 'Review' %}
+                {% include 'webapp/partials/review_snippets.html' with review=instance %}
+
+    {% endif %}
+    {% endfor %}
+
+</div>
+<span>
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; première</a>
+            <a href="?page={{ page_obj.previous_page_number }}">précédente</a>
+        {% endif %}
+
+        <span>
+            Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}.
+
+        </span>
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}"><button>suivante</button></a>
+
+            <a href="?page={{ page_obj.paginator.num_pages }}"><button>dernière &raquo;</button></a>
+        {% endif %}
+    </span>
+{% endblock %}

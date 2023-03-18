@@ -1,0 +1,13 @@
+{% load webapp_extras %}
+
+<div class="article-ticket">
+
+<!--Id - {%{ instance.id }}-->
+    <p></p>
+    <p>{% get_poster_display ticket.user %}  avez demandé une critique:</p>
+    <p>{{ ticket.title }}</p>
+    {{ ticket.description }}
+    <small>{{ ticket.time_created }}</small>
+    <p><a href="{% url 'response-reviews' ticket_id=instance.id %}">
+        <button>créer une critique</button></a></p>
+</div>

@@ -1,0 +1,9 @@
+{% load webapp_extras %}
+
+<div class="article-review">
+<!--Id - {%{ instance.id }}-->
+     <p>Ticket {{ review.user }} : posted a review   <small>{{ review.time_created }}</small></p>
+     <p>{{ review.headline }}</p>
+     <p>{{ review.rating }} Etoiles</p>
+     <p>{{ review.body }}</p>
+</div>

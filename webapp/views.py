@@ -11,13 +11,16 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from . import forms, models
 from webapp.models import Ticket, Review, UserFollows
-from webapp.forms import AskReview, TicketForm, CreateOriginalReviewForm, \
-    CreateResponseReviewForm, Review, LoginForm, FollowUsersForm  # CreateOriginalReviewTop, CreateOriginalReviewBottom,
-# from django.contrib.auth.models import User
+from webapp.forms import CreateTicket, TicketForm, CreateOriginalReviewForm, \
+    CreateResponseReviewForm, Review, LoginForm, FollowUsersForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.http import HttpResponse
 from webapp.admin import UserFollowsAdmin
+from django.core.paginator import Paginator
+from django.dispatch import receiver
+from django.db.models.signals import pre_save
+from django.contrib import messages
 
 
 # ================== LOGIN =========================================
@@ -69,22 +72,32 @@ def signup_page(request):
 
 @login_required
 def flow_view(request):
-    user_id = request.user.id
-    followed_users = UserFollows.objects.filter(user=user_id)
-    str_followed_users = []
-    for user in followed_users:
-        str_followed_users.append(str(user.followed_user))
 
-    print(models.UserFollows.objects.filter(user=request.user).values())
-    print('str:', str_followed_users)
+    # print('test:', UserFollows.objects.get(Q(id=2)))
+    user_id = request.user.id
+    #print('user_id:', user_id)          # int = n° dans l'ordre d'arrivee
+    followed_users = UserFollows.objects.filter(user=user_id)
+    #print('followed_users:', followed_users)  # ex: <QuerySet [<UserFollows: ben follows  lou>,
+                            # <UserFollows: ben follows  bill>, <UserFollows: ben follows  vivi>]>
+
+    str_followed_users = []
+    for elt in followed_users:
+        str_followed_users.append(str(elt.followed_user))
+
+    #print('models.UserFollows.objects.filter: ', models.UserFollows.objects.filter(user=request.user).values())
+    # print('str:', str_followed_users)
 
     tickets = models.Ticket.objects.order_by('-time_created')
+    print('tickets:', tickets)
     reviews = models.Review.objects.order_by('-time_created')
+    print('reviews:', reviews)
     tickets_and_reviews = []
 
     for ticket in tickets:
         if str(ticket.user) in str_followed_users or str(ticket.user) == str(request.user):
+            # print('str(ticket.user:', str(ticket.user))
             for review in reviews:
+                # print('ticket:', ticket)
                 if ticket == review.ticket:
                     ticket.done = True
             tickets_and_reviews.append(ticket)
@@ -96,19 +109,24 @@ def flow_view(request):
     ordered_tickets_and_reviews = sorted(tickets_and_reviews,
                                          key=lambda instance: instance.time_created,
                                          reverse=True)
-    return render(request, 'webapp/flow.html', context={'ordered_tickets_and_reviews': ordered_tickets_and_reviews})
+
+    paginator = Paginator(ordered_tickets_and_reviews, 3)
+    page = request.GET.get('page')
+    page_obj = paginator.get_page(page)
+
+    return render(request, 'webapp/flow.html', context={'ordered_tickets_and_reviews': page_obj, 'page_obj': page_obj})
 
 
 @login_required
-def ask_review(request, ticket_id=None):  # Bouton demander une critique
+def create_ticket(request, ticket_id=None):  # Bouton demander une critique(ask review)
     ticket_instance = (
         Ticket.objects.get(pk=ticket_id) if ticket_id is not None else None)
 
     if request.method == "GET":
-        form = forms.AskReview(instance=ticket_instance)
-        return render(request, 'webapp/ask_review.html', context={'form': form})
+        form = forms.CreateTicket(instance=ticket_instance)
+        return render(request, 'webapp/create_ticket.html', context={'form': form})
     if request.method == "POST":
-        form = forms.AskReview(request.POST)
+        form = forms.CreateTicket(request.POST, instance=ticket_instance)
         if form.is_valid():
             new_ticket = form.save(commit=False)
             new_ticket.user = request.user
@@ -118,7 +136,6 @@ def ask_review(request, ticket_id=None):  # Bouton demander une critique
 
 @login_required
 def create_original_review(request):
-
     if request.method == "GET":
         ticket_form = forms.TicketForm()
         review_form = forms.CreateOriginalReviewForm()
@@ -143,62 +160,6 @@ def create_original_review(request):
             return redirect('flow')
 
 
-"""
-@login_required
-def create_original_review(request, ticket_id=None):
-    original_ticket_instance = (
-        Review.objects.get(pk=ticket_id) if ticket_id is not None else None)
-    if request.method == "GET":
-        ticket_form = forms.TicketForm(instance=original_ticket_instance)
-        review_form = forms.ReviewForm()
-        return render(request, 'webapp/original_review.html',
-                      context={'ticket_form': ticket_form, 'review_form': review_form})
-
-    elif request.method == 'POST':
-        ticket_form = forms.TicketForm(request.POST)
-        review_form = forms.ReviewForm(request.POST)
-        if all([ticket_form.is_valid(), review_form.is_valid()]):
-            ticket = ticket_form.save(commit=False)
-            ticket.user = request.user
-            ticket.save()
-            review = review_form.save(commit=False)
-            review.user = request.user
-            review.ticket = ticket
-            review.save()
-            return redirect('flow')
-
-@login_required
-def create_response_review(request, review_id=None, ticket_id=None):
-    review_instance = (
-        Review.objects.get(pk=review_id) if review_id is not None else None
-    )
-    ticket_instance = (
-        Ticket.objects.get(pk=ticket_id) if ticket_id is not None else None
-    )
-
-    if request.method == "GET":
-        ticket_form = forms.TicketForm(instance=ticket_instance)  # , initial={"ticket": ticket_instance})
-        review_form = forms.ReviewForm(instance=review_instance)  # , initial={"review": review_instance})
-        context = {"ticket_form": ticket_form, "review_form": review_form}
-        return render(request, 'webapp/response_review.html',
-                      context=context)
-
-    if request.method == 'POST':
-        ticket_form = forms.TicketForm(request.POST)
-        review_form = forms.ReviewForm(request.POST)
-        if all([ticket_form.is_valid(), review_form.is_valid()]):
-            ticket = ticket_form.save(commit=False)
-            ticket.save()
-            review = review_form.save(commit=False)
-            # review.ticket = ticket
-            name = request.user
-            print('user: ', name)
-            review.save()
-            return redirect('flow')
-
-"""
-
-
 def create_response_review(request, ticket_id=None):
     ticket = get_object_or_404(Ticket, id=ticket_id)
 
@@ -216,22 +177,6 @@ def create_response_review(request, ticket_id=None):
             review.time_created = timezone.now()
             review.save()
             return redirect('flow')
-"""
-if request.method == "GET":
-    review_form = forms.CreateResponseReview()
-    
-
-elif request.method == 'POST':
-    review_form = forms.CreateResponseReview(request.POST)
-
-    if review_form.is_valid:
-        post = review_form.save(commit=False)
-        post.ticket = ticket
-        post.user = request.user
-        post.time_created = timezone.now()
-        post.save()
-"""
-    # return redirect('flow')
 
 
 @login_required
@@ -243,10 +188,11 @@ def owner_post_view(request):
 
 
 @login_required
-def add_follower(request):
+def add_follower(request, followed_user_id=None):
     user_id = request.user.id
     followed_model_users = models.UserFollows.objects.filter(user=user_id)
     following_model_users = models.UserFollows.objects.filter(followed_user=user_id)
+
 
     follower_users = []
     followed_users = []
@@ -261,52 +207,58 @@ def add_follower(request):
                       {'followed_users': followed_users, 'followed_form': followed_form, 'follower_users': follower_users})
 
     elif request.method == "POST":
-        followed_form = FollowUsersForm(request.POST)
+        followed_form = FollowUsersForm(request, instance=followed_user)
+       # pass
+       # username = request.POST['followed_user']
+        # followed_form = FollowUsersForm(request.POST)
         if followed_form.is_valid():
-            new_followed_user = followed_form.cleaned_data['followed_user']
-            user = request.user
-            # Exception: " didn't return an HttpResponse object. It returned None instead"
-            # new_followed_user = followed_form.save(commit=False)
-            # new_followed_user.user = request.user
-
-            print('user:', user)
-            print('new_followed_user:', new_followed_user)
-
-            follow_relations = UserFollows(user=user, followed_user=new_followed_user)
-            follow_relations.save()
-
+            print('request.POST:', followed_user)
+        # list = model.User
+        # print('model.user', models.get_user_model().objects.all()[0].__dict__)
+        # new_followed_user = followed_form.cleaned_data['username']
+    """if username != f'{request.user}':
+        user = models.User.objects.get(id=request.user.id)
+        followed_user = models.User.objects.filter(username=username)[0]
+        if followed_user is not None:
+            add_follower = models.UserFollows(user=user, followed_user=followed_user)
+            add_follower.save()
+        else:
             return redirect('subscribers')
+
+            #context = {'form': form, 'followers': followers,
+                       #'follows': follows, 'page_name': 'Abonnements', 'error': error}
+            #return render(request, 'followers/follows.html', context=context)
+        # user = request.user
+        # Exception: " didn't return an HttpResponse object. It returned None instead"
+        # new_followed_user = followed_form.save(commit=False)
+        # new_followed_user.user = request.user
+
+        #print('user:', user)
+        #print('new_followed_user:', new_followed_user)
+
+        #follow_relations = UserFollows(user=user, followed_user=new_followed_user)
+        #follow_relations.save()
+
+        #return redirect('subscribers')
+        """
+
+
+@receiver(pre_save, sender=UserFollows)
+def check_self_following(sender, instance, **kwargs):
+    if instance.follower == instance.user:
+        raise ValidationError('You can not follow yourself')
 
 
 @login_required
 def unfollow(request, user_id):
-    post = get_object_or_404(UserFollows, id=user_id)
-    post.followed_user.delete()
+    follower = UserFollows.objects.filter(Q(followed_user_id=user_id) & Q(user_id=request.user.id))
+    follower.delete()
+    messages.success(request, "Abonné supprimé.")
     return redirect('subscribers')
-
-
-"""
-@login_required
-def modify_review(request, review_id):
-    review = Review.objects.get(id=review_id)
-
-    if request.method == 'POST':
-        review_modify_form = ReviewForm(request.POST, instance=review)
-        if review_modify_form.is_valid():
-            # mettre à jour le groupe existant dans la base de données
-            review_modify_form.save()
-            # rediriger vers la page détaillée du groupe que nous venons de mettre à jour
-            return redirect('review-detail', review.id)
-    else:
-        review = ReviewForm(instance=review)
-
-    return render(request,
-                  'webapp/modify_review.html',
-                  {'review_modify_form': review_modify_form})
-
-"""
 
 
 @login_required
 def delete_tickets(request, ticket_id):
-    pass
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    ticket.delete()
+    return redirect('flow')

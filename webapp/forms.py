@@ -41,7 +41,7 @@ class SignupForm(UserCreationForm):
         }
 
 
-class AskReview(ModelForm):
+class CreateTicket(ModelForm):
     class Meta:
         model = models.Ticket
         fields = ['title', 'description']
@@ -61,7 +61,7 @@ class CreateOriginalReviewForm(ModelForm):
         ('2', 'Option 2'),
         ('3', 'Option 3'),
         ('4', 'Option 4'),
-        ('4', 'Option 4'),
+        ('4', 'Option 5'),
     ]
 
     headline = forms.CharField(max_length=30, label='Titre')
@@ -94,7 +94,7 @@ class CreateResponseReviewForm(forms.ModelForm):
 
 
 class FollowUsersForm(ModelForm):
-    # followed_user = forms.CharField(label='')
+    followed_user = forms.CharField(label='')
     # widget=forms.TextInput(attrs={'placeholder': "Nom d'utilisateur"}),
     # required=True)
 
@@ -102,8 +102,8 @@ class FollowUsersForm(ModelForm):
         model = models.UserFollows
         fields = ['followed_user']
         # labels = {'followed_user': ' ', }       # 'Suivre d'autres utilisateurs'
-        # widgets = {'followed_user': forms.TextInput(
-        # attrs={'class': 'form-control', 'placeholder': "Nom d'utilisateur"})}
+        widgets = {'followed_user': forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': "Nom d'utilisateur"})}
 
 
 class DeleteTicketForm(ModelForm):

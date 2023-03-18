@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<p><h4>Créer un ticket</h4></p>
+<br/><br/>
+        {% if form.instance.id %}
+                <form method="POST" action="{% url 'create-ticket' ticket_id=form.instance.id %}">
+        {% else %}
+                <form method="POST" action="{% url 'create-ticket' %}">
+        {% endif %}
+                {{ form.as_p }}
+                {% csrf_token %}
+        <!--<button class="btn btn-secondary">Envoyer</button>-->
+        <input type="submit">
+</form>
+<p>Image</p>
+<button type="submit" >Télécharger fichier</button>
+
+{% endblock %}

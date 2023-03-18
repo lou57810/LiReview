@@ -1,25 +1,20 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
-
-<div class="container_list">
+<link rel="stylesheet" href="{% static 'flow.css' %}">
+<div class="article">
     <h4>Vos Posts</h4>
 
     {% for ticket in tickets %}
-        Ticket - {{ ticket.user }}
-        {{ ticket.title }}
-        {{ ticket.description }}
+    <div class="article-ticket">
+        <p>Ticket - {{ ticket.user }}</p>
+        <p>{{ ticket.title }}</p>
+        <p>{{ ticket.description }}</p>
         <small>{{ ticket.time_created }}</small><!--<a href="{#% url 'response-reviews' %}">-->
-                <button>Modifier</button></a><a href="#"><button class="btn btn-secondary">Supprimer</button></a></li></br></br>
+    <a href="{% url 'create-ticket' ticket_id=ticket.id %}"><button class=
+                    "btn btn-secondary">Modifier</button></a><a href="{% url 'delete-tickets' ticket_id=ticket.id %}">
+                    <button class="btn btn-secondary">Supprimer</button></a></li></br></br>
+        </div>
     {% endfor %}
-
-
 </div>
-<div class="container_flux">
-    <ul>
-        <!--<li><a href="{#% url 'update-tickets' %}"><button class="btn btn-secondary">Modifier</button></a></li>
-        <li><a href="#"><button class="btn btn-secondary">Supprimer</button></a></li>-->
-    </ul>
-</div>
-
-
 {% endblock %}

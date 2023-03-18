@@ -18,11 +18,20 @@
             {% for instance in followed_users %}
             <ul>
                 {{ instance.followed_user }} <a  href=
-                             "{% url 'unfollow' user_id=user.id %}"><button>Désabonner</button></a>
+                             "{% url 'unfollow' user_id=instance.followed_user.id %}"><button>Désabonner</button></a>
             </ul>
             {% endfor %}
+            <div>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="info"><h1>{{ message }}</h1></div>
+                {% endfor %}
+            {% endif %}
+            </div>
         </div>
+
     </div>
+
     <div class="follow_container">
         <div class="container_list_bottom">
 

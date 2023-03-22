@@ -11,7 +11,8 @@ User = get_user_model()
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'placeholder': "Nom d'utilisateur"}), label='')
+    username = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'placeholder': "Nom d'utilisateur"}),
+                               label='')
     password = forms.CharField(max_length=30,
                                widget=forms.PasswordInput(attrs={'placeholder': "Mot de passe"}),
                                label='')
@@ -84,7 +85,7 @@ class CreateResponseReviewForm(forms.ModelForm):
 
     headline = forms.CharField(max_length=30, label='Titre')
     rating = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, label="Note")
-    body = forms.CharField(label="Commentaire", widget=forms.Textarea(attrs={}))  #     {'label': 'Commentaire'}))
+    body = forms.CharField(label="Commentaire", widget=forms.Textarea(attrs={}))  # {'label': 'Commentaire'}))
 
     class Meta:
         model = models.Review
@@ -92,18 +93,33 @@ class CreateResponseReviewForm(forms.ModelForm):
         # widgets = {'Note': forms.NumberInput(attrs={'class': 'Stars'})}
         # labels = {'Note': ''}
 
-
+"""
 class FollowUsersForm(ModelForm):
-    followed_user = forms.CharField(label='')
-    # widget=forms.TextInput(attrs={'placeholder': "Nom d'utilisateur"}),
+    followed_user = forms.CharField(label='', max_length=800,
+                                    widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Nom d'utilisateur"}))
+
     # required=True)
 
     class Meta:
         model = models.UserFollows
         fields = ['followed_user']
-        # labels = {'followed_user': ' ', }       # 'Suivre d'autres utilisateurs'
-        widgets = {'followed_user': forms.TextInput(
-            attrs={'class': 'form-control', 'placeholder': "Nom d'utilisateur"})}
+        # widgets = {'followed_user': forms.TextInput(
+        # attrs={'class': 'form-control', 'placeholder': "Nom d'utilisateur"})}
+        
+        # Error Message: UserFollows.followed_user must be a User instance.
+"""
+
+
+class FollowUsersForm(forms.Form):
+    followed_user = forms.CharField(label='', max_length=800,
+                                    widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Nom d'utilisateur"}))
+
+    # Error Message:  'str' object has no attribute 'user'
+    """
+    def __init__(self, *args, **kwargs):
+        self.product_id = kwargs.pop('product_id')
+        super(OrderForm, self).__init__(*args, **kwargs)
+    """
 
 
 class DeleteTicketForm(ModelForm):

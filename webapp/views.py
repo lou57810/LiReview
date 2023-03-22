@@ -10,7 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from . import forms, models
-from webapp.models import Ticket, Review, UserFollows
+from webapp.models import Ticket, Review, User, UserFollows
 from webapp.forms import CreateTicket, TicketForm, CreateOriginalReviewForm, \
     CreateResponseReviewForm, Review, LoginForm, FollowUsersForm
 from django.shortcuts import get_object_or_404
@@ -73,40 +73,19 @@ def signup_page(request):
 @login_required
 def flow_view(request):
 
-    # print('test:', UserFollows.objects.get(Q(id=2)))
-    user_id = request.user.id
-    #print('user_id:', user_id)          # int = n° dans l'ordre d'arrivee
-    followed_users = UserFollows.objects.filter(user=user_id)
-    #print('followed_users:', followed_users)  # ex: <QuerySet [<UserFollows: ben follows  lou>,
-                            # <UserFollows: ben follows  bill>, <UserFollows: ben follows  vivi>]>
+    followed_users_list = []
+    for user in UserFollows.objects.filter(user=request.user):
+        followed_users_list.append(user.followed_user)
 
-    str_followed_users = []
-    for elt in followed_users:
-        str_followed_users.append(str(elt.followed_user))
+    tickets = Ticket.objects.filter(
+        Q(user=request.user) | Q(user__in=followed_users_list)
+    )
 
-    #print('models.UserFollows.objects.filter: ', models.UserFollows.objects.filter(user=request.user).values())
-    # print('str:', str_followed_users)
+    reviews = Review.objects.filter(
+        Q(user=request.user) | Q(user=request.user) | Q(user__in=followed_users_list)
+    )
 
-    tickets = models.Ticket.objects.order_by('-time_created')
-    print('tickets:', tickets)
-    reviews = models.Review.objects.order_by('-time_created')
-    print('reviews:', reviews)
-    tickets_and_reviews = []
-
-    for ticket in tickets:
-        if str(ticket.user) in str_followed_users or str(ticket.user) == str(request.user):
-            # print('str(ticket.user:', str(ticket.user))
-            for review in reviews:
-                # print('ticket:', ticket)
-                if ticket == review.ticket:
-                    ticket.done = True
-            tickets_and_reviews.append(ticket)
-
-    for review in reviews:
-        if str(review.user) in str_followed_users or str(review.user) == str(request.user):
-            tickets_and_reviews.append(review)
-
-    ordered_tickets_and_reviews = sorted(tickets_and_reviews,
+    ordered_tickets_and_reviews = sorted(chain(tickets, reviews),
                                          key=lambda instance: instance.time_created,
                                          reverse=True)
 
@@ -188,11 +167,15 @@ def owner_post_view(request):
 
 
 @login_required
-def add_follower(request, followed_user_id=None):
-    user_id = request.user.id
-    followed_model_users = models.UserFollows.objects.filter(user=user_id)
-    following_model_users = models.UserFollows.objects.filter(followed_user=user_id)
+def add_follower(request):
+    # followed_form = FollowUsersForm()
+    # user = UserFollows()
+    # UserFollows.followed_user = User()
+    # instance = (
+        # UserFollows.objects.get(pk=user_id) if user_id is not None else None)
 
+    followed_model_users = models.UserFollows.objects.filter(user=request.user)
+    following_model_users = models.UserFollows.objects.filter(followed_user=request.user)
 
     follower_users = []
     followed_users = []
@@ -200,61 +183,73 @@ def add_follower(request, followed_user_id=None):
         followed_users.append(user)
     for user in following_model_users:
         follower_users.append(user)
-
+    # ======================================
     if request.method == "GET":
         followed_form = FollowUsersForm()
-        return render(request, 'webapp/follow_users_form.html',
-                      {'followed_users': followed_users, 'followed_form': followed_form, 'follower_users': follower_users})
-
-    elif request.method == "POST":
-        followed_form = FollowUsersForm(request, instance=followed_user)
-       # pass
-       # username = request.POST['followed_user']
-        # followed_form = FollowUsersForm(request.POST)
+    # ======================================
+    elif request.method == 'POST':
+        followed_form = FollowUsersForm(request.POST)
+        # print('followed_form:', followed_form)
         if followed_form.is_valid():
-            print('request.POST:', followed_user)
-        # list = model.User
-        # print('model.user', models.get_user_model().objects.all()[0].__dict__)
-        # new_followed_user = followed_form.cleaned_data['username']
-    """if username != f'{request.user}':
-        user = models.User.objects.get(id=request.user.id)
-        followed_user = models.User.objects.filter(username=username)[0]
-        if followed_user is not None:
-            add_follower = models.UserFollows(user=user, followed_user=followed_user)
-            add_follower.save()
-        else:
+            followed_user = followed_form.cleaned_data['followed_user']
+
+            pos = User.objects.filter(username=followed_user)[0]
+            print('pos:', pos)
+
+
+            # print('entry:', type(followed_user), new_followed_user)
+            new_entry = UserFollows(user=request.user, followed_user=pos)
+            new_entry.save()
+
             return redirect('subscribers')
 
-            #context = {'form': form, 'followers': followers,
-                       #'follows': follows, 'page_name': 'Abonnements', 'error': error}
-            #return render(request, 'followers/follows.html', context=context)
-        # user = request.user
-        # Exception: " didn't return an HttpResponse object. It returned None instead"
-        # new_followed_user = followed_form.save(commit=False)
-        # new_followed_user.user = request.user
+    return render(request, 'webapp/follow_users_form.html',
+                  {'followed_users': followed_users, 'followed_form': followed_form, 'follower_users': follower_users})
+"""
+    if request.method == "POST":
+        followed_form = FollowUsersForm(request.POST)
 
-        #print('user:', user)
-        #print('new_followed_user:', new_followed_user)
+        if followed_form.is_valid():
+            followed_form.save(commit=False)
+            # new_followed_user = followed_form.cleaned_data
+            new_followed_user = get_object_or_404(UserFollows, id=follow_form.cleaned_data['new_followed_user'])
+            if request.user.follows.filter(id=followed_user.id).exists():
+                new_user = request.user
 
-        #follow_relations = UserFollows(user=user, followed_user=new_followed_user)
-        #follow_relations.save()
+            new_entry = UserFollows(user=new_user, followed_user=new_followed_user)
+            new_entry.save()
+            # print('new_followed_user', new_followed_user.id)
+            return redirect('subscribers')
+        
+        # followed_form = form.save(commit=False)
 
-        #return redirect('subscribers')
-        """
+        
+        if username != f'{request.user}':
+            user = models.User.objects.get(id=request.user.id)
+            followed_user = models.User.objects.filter(username=username)[0]
+            if followed_user is not None:
+                add_follower = models.UserFollows(user=user, followed_user=followed_user)
+                add_follower.save()
+        else:
+        
+
+
 
 
 @receiver(pre_save, sender=UserFollows)
 def check_self_following(sender, instance, **kwargs):
     if instance.follower == instance.user:
         raise ValidationError('You can not follow yourself')
+"""
 
 
 @login_required
 def unfollow(request, user_id):
     follower = UserFollows.objects.filter(Q(followed_user_id=user_id) & Q(user_id=request.user.id))
     follower.delete()
-    messages.success(request, "Abonné supprimé.")
+    # messages.success(request, "Abonné supprimé.")
     return redirect('subscribers')
+
 
 
 @login_required

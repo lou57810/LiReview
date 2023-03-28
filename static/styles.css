@@ -50,9 +50,8 @@ body {
     }
 
 .container {
+    border: solid 1px #000;
     padding-top: 50px;
-    height: 100%;
-
 }
 
 .container, h2, h3 {
@@ -75,54 +74,25 @@ body {
 text-align: left;
 }
 
-/*
-.stars {
-    display: flex;
+.info {
+    border: solid 1px #000;
+    color: red;
     }
 
-.stars.disabled {
-    pointer-events: none;
-    }
-
-.stars a {
-     opacity: 50%;
-     cursor: pointer;
-     padding: 5px;
-     }
-
-.stars:hover a {
-     opacity: 100%;
-     cursor: pointer;
-     }
-
-.stars a:hover {
-     opacity: 100%;
-     }
-
-.stars a:hover ~ a {
-     opacity: 50%;
-     }
-
-.stars a.active {
-     opacity: 100%;
-     }
-
-
-.container, .ticket-list {
-    width: 100%;
-    height: 100%;
-    color: black;
+/* ========= POST =============== */
+.article_post {
+    margin: 10px;
+    border-radius: 5px;
+    border: solid 1px #000;
 }
 
-.container .ticket-list ul {
-
+.article_post .article_post_ticket {
+    margin: 10px;
+    border-radius: 5px;
+    border: solid 1px #000;
 }
+/* =============================== */
 
-.container .ticket-list li {
-    display: inline;
-    color: black;
-}
-*/
 /* =========== page follow_users_form =============*/
 
 .follow_container .container_list {
@@ -152,9 +122,4 @@ text-align: left;
     border: 2px solid black;
 
   }
-/*
-.container .container_list ul li {
-    color: black;
-    height: 30px;
-    }
-*/
+

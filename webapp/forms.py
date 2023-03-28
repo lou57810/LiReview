@@ -18,6 +18,9 @@ class LoginForm(forms.Form):
                                label='')
 
 
+# ======================================= Logging ========================================
+
+
 class SignupForm(UserCreationForm):
     username = forms.CharField(label='', widget=forms.TextInput(attrs={'placeholder': 'Nom d\'utilisateur'}))
     password1 = forms.CharField(label='', widget=forms.TextInput(attrs={'placeholder': 'Mot de passe'}))
@@ -28,32 +31,24 @@ class SignupForm(UserCreationForm):
         # model = get_user_model()
         model = User
         fields = ['username', 'password1', 'password2']
-        widgets = {
-            'username': forms.TextInput(attrs={
+        widgets = {'username': forms.TextInput(attrs={'placeholder': 'Nom d\'utilisateur', }),
+                   'password1': forms.PasswordInput(attrs={'placeholder': "Mot de passe", }),
+                   'password2': forms.PasswordInput(attrs={'placeholder': "Confirmer Mot de passe"}), }
 
-                'placeholder': 'Nom d\'utilisateur',
-            }),
-            'password1': forms.PasswordInput(attrs={
-                'placeholder': "Mot de passe"
-            }),
-            'password2': forms.PasswordInput(attrs={
-                'placeholder': "Confirmer Mot de passe"
-            }),
-        }
-
-
-class CreateTicket(ModelForm):
-    class Meta:
-        model = models.Ticket
-        fields = ['title', 'description']
+# ============================================================================================
 
 
 class TicketForm(ModelForm):
-    # edit_ticket = forms.BooleanField(widget=forms.HiddenInput, initial=True)
+    title = forms.CharField(max_length=30, label='Titre')
+    image = forms.ImageField(required=False)
 
     class Meta:
         model = models.Ticket
-        fields = ['title', 'description']
+        fields = ['title', 'description', 'image']
+
+        def __init__(self, *args, **kwargs):
+            super(TicketForm, self).__init__(*args, **kwargs)
+            self.fields['image'].required = False
 
 
 class CreateOriginalReviewForm(ModelForm):
@@ -62,7 +57,7 @@ class CreateOriginalReviewForm(ModelForm):
         ('2', 'Option 2'),
         ('3', 'Option 3'),
         ('4', 'Option 4'),
-        ('4', 'Option 5'),
+        ('5', 'Option 5'),
     ]
 
     headline = forms.CharField(max_length=30, label='Titre')
@@ -80,46 +75,22 @@ class CreateResponseReviewForm(forms.ModelForm):
         ('2', 'Option 2'),
         ('3', 'Option 3'),
         ('4', 'Option 4'),
-        ('4', 'Option 4'),
+        ('5', 'Option 5'),
     ]
 
     headline = forms.CharField(max_length=30, label='Titre')
     rating = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, label="Note")
-    body = forms.CharField(label="Commentaire", widget=forms.Textarea(attrs={}))  # {'label': 'Commentaire'}))
+    body = forms.CharField(label="Commentaire", widget=forms.Textarea(attrs={}))
 
     class Meta:
         model = models.Review
         fields = ['headline', 'rating', 'body']
-        # widgets = {'Note': forms.NumberInput(attrs={'class': 'Stars'})}
-        # labels = {'Note': ''}
-
-"""
-class FollowUsersForm(ModelForm):
-    followed_user = forms.CharField(label='', max_length=800,
-                                    widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Nom d'utilisateur"}))
-
-    # required=True)
-
-    class Meta:
-        model = models.UserFollows
-        fields = ['followed_user']
-        # widgets = {'followed_user': forms.TextInput(
-        # attrs={'class': 'form-control', 'placeholder': "Nom d'utilisateur"})}
-        
-        # Error Message: UserFollows.followed_user must be a User instance.
-"""
 
 
 class FollowUsersForm(forms.Form):
     followed_user = forms.CharField(label='', max_length=800,
-                                    widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Nom d'utilisateur"}))
-
-    # Error Message:  'str' object has no attribute 'user'
-    """
-    def __init__(self, *args, **kwargs):
-        self.product_id = kwargs.pop('product_id')
-        super(OrderForm, self).__init__(*args, **kwargs)
-    """
+                                    widget=forms.TextInput(
+                                        attrs={'class': 'form-control', 'placeholder': "Nom d'utilisateur"}))
 
 
 class DeleteTicketForm(ModelForm):

@@ -3,17 +3,19 @@
 
 <p><h4>Créer un ticket</h4></p>
 <br/><br/>
-        {% if form.instance.id %}
-                <form method="POST" action="{% url 'create-ticket' ticket_id=form.instance.id %}">
+        {% if ticket_form.instance.id %}
+                <form method="POST" action="{% url 'create-ticket' ticket_id=ticket_form.instance.id %}" enctype='multipart/form-data'></form>
         {% else %}
-                <form method="POST" action="{% url 'create-ticket' %}">
+                <form method="POST" action="{% url 'create-ticket' %}" enctype='multipart/form-data'>
         {% endif %}
-                {{ form.as_p }}
+                {{ ticket_form.as_p }}
                 {% csrf_token %}
         <!--<button class="btn btn-secondary">Envoyer</button>-->
         <input type="submit">
+
+
+<!--<button type="submit" >Télécharger fichier</button>-->
 </form>
-<p>Image</p>
-<button type="submit" >Télécharger fichier</button>
+
 
 {% endblock %}

@@ -10,5 +10,5 @@ def model_type(value):
 @register.simple_tag(takes_context=True)
 def get_poster_display(context, user):
     if context['user'] == user:
-        return 'Vous'
+        return 'Vous '
     return user

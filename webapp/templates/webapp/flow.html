@@ -12,10 +12,12 @@
     </div>
     </br></br>
 <div class="article">
+
     {% for instance in ordered_tickets_and_reviews %}
 
             {% if instance|model_type == 'Ticket' %}
                 {% include 'webapp/partials/ticket_snippets.html' with ticket=instance %}
+
             {% elif instance|model_type == 'Review' %}
                 {% include 'webapp/partials/review_snippets.html' with review=instance %}
 

@@ -3,21 +3,35 @@
 
 
 <p>Créer une critique</p>
+<div class="article-review">
 <br/><br/>
 <p>Vous êtes en train de poster en réponse à :</p>
-        {{ ticket.user }} a demandé une critique</br>
-        {{ ticket }}
-        {{ review }}
-        <form method="POST">
+        <div class="ticket_body">
+            <p> Ticket {{ ticket.user }}   <small>{{ ticket.time_created }}</small></br></p>
+                <p>{{ ticket.title }}</p>
+                {{ ticket.description }}
+
+                <!--{#% template_exists 'someapp/sometemplate.html' %}-->
+                <p>
+                    {% if ticket.image.url is not None %}
+                        <img src="{{ ticket.image.url }}">
+                    {% endif %}
+                </p>
+            </div>
+
+
+
+        <form method="POST" action="{% url 'create-reviews' %}">
+                {% if review_form.instance.id %}
+                        <form method="POST" action="{% url 'create-reviews' %}" review_id="review_form.instance.id %}">
+                {% else %}
+                        <form method="POST" action="{% url 'create-reviews' %}">
+                {% endif %}
                 <p>Critique</p>
         {% csrf_token %}
-
         {{ review_form.as_p }}
-
         <!--<button class="btn btn-secondary">Envoyer</button>-->
         <input type="submit">
         </form>
-<p>Image</p>
-
-
 {% endblock %}
+</div>

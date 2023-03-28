@@ -1,18 +1,14 @@
 from itertools import chain
-from django.views.generic import View, ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import View
 from django.conf import settings
-from django.forms.formsets import formset_factory
-# from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from django.http import HttpResponse
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from . import forms, models
 from webapp.models import Ticket, Review, User, UserFollows
-from webapp.forms import CreateTicket, TicketForm, CreateOriginalReviewForm, \
-    CreateResponseReviewForm, Review, LoginForm, FollowUsersForm
+from webapp.forms import TicketForm, CreateOriginalReviewForm, \
+    CreateResponseReviewForm, LoginForm, FollowUsersForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.http import HttpResponse
@@ -93,57 +89,60 @@ def flow_view(request):
     page = request.GET.get('page')
     page_obj = paginator.get_page(page)
 
-    return render(request, 'webapp/flow.html', context={'ordered_tickets_and_reviews': page_obj, 'page_obj': page_obj})
+    return render(request, 'webapp/flow.html', context={
+        'ordered_tickets_and_reviews': page_obj, 'page_obj': page_obj})
 
 
 @login_required
 def create_ticket(request, ticket_id=None):  # Bouton demander une critique(ask review)
-    ticket_instance = (
-        Ticket.objects.get(pk=ticket_id) if ticket_id is not None else None)
+    ticket_instance = (Ticket.objects.get(id=ticket_id) if ticket_id is not None else None)
 
     if request.method == "GET":
-        form = forms.CreateTicket(instance=ticket_instance)
-        return render(request, 'webapp/create_ticket.html', context={'form': form})
+        ticket_form = forms.TicketForm(instance=ticket_instance)
+        return render(request, 'webapp/create_ticket.html', context={'ticket_form': ticket_form})
     if request.method == "POST":
-        form = forms.CreateTicket(request.POST, instance=ticket_instance)
-        if form.is_valid():
-            new_ticket = form.save(commit=False)
+        ticket_form = forms.TicketForm(request.POST, request.FILES, instance=ticket_instance)
+        if ticket_form.is_valid():
+            new_ticket = ticket_form.save(commit=False)
             new_ticket.user = request.user
             new_ticket.save()
             return redirect('flow')
 
 
 @login_required
-def create_original_review(request):
+def create_original_review(request, ticket_id=None, review_id=None):
+    ticket = (Ticket.objects.get(id=ticket_id) if ticket_id is not None else None)
+    review = (Review.objects.get(id=review_id) if review_id is not None else None)
     if request.method == "GET":
         ticket_form = forms.TicketForm()
         review_form = forms.CreateOriginalReviewForm()
-        return render(request, 'webapp/original_review.html',
+        return render(request, 'webapp/create_review.html',
                       context={'ticket_form': ticket_form, 'review_form': review_form})
 
     if request.method == "POST":
-        ticket_form = forms.TicketForm(request.POST)
-        if ticket_form.is_valid():
+        review_form = forms.CreateOriginalReviewForm(request.POST)
+        ticket_form = forms.TicketForm(request.POST, request.FILES, instance=ticket)
+        if any([review_form.is_valid(), ticket_form.is_valid()]):
             ticket = ticket_form.save(commit=False)
             ticket.user = request.user
-            ticket.time_created = timezone.now()
+            # ticket.time_created = timezone.now()
             ticket.save()
 
-            reviews_form = forms.CreateOriginalReviewForm(request.POST)
-            reviews_ticket = Ticket.objects.get(id=ticket.id)
-            review = reviews_form.save(commit=False)
-            review.ticket = reviews_ticket
+            # review_ticket = Ticket.objects.get(id=ticket.id)
+            review = review_form.save(commit=False)
+            review.ticket = ticket
             review.user = request.user
             review.time_created = timezone.now()
             review.save()
             return redirect('flow')
 
 
-def create_response_review(request, ticket_id=None):
+def create_response_review(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
+    review_form = forms.CreateResponseReviewForm(request.POST)
 
     if request.method == "GET":
-        review_form = forms.CreateResponseReviewForm()
+        # review_form = forms.CreateResponseReviewForm()
         return render(request, 'webapp/response_review.html', {
             'ticket': ticket, 'review_form': review_form})
 
@@ -162,17 +161,11 @@ def create_response_review(request, ticket_id=None):
 def owner_post_view(request):
     tickets = models.Ticket.objects.filter(user=request.user).order_by('-time_created')
     reviews = models.Review.objects.filter(user=request.user).order_by('-time_created')
-    # redirect('view-posts')
     return render(request, "webapp/view_posts.html", {'tickets': tickets, 'reviews:': reviews})
 
 
 @login_required
 def add_follower(request):
-    # followed_form = FollowUsersForm()
-    # user = UserFollows()
-    # UserFollows.followed_user = User()
-    # instance = (
-        # UserFollows.objects.get(pk=user_id) if user_id is not None else None)
 
     followed_model_users = models.UserFollows.objects.filter(user=request.user)
     following_model_users = models.UserFollows.objects.filter(followed_user=request.user)
@@ -194,53 +187,22 @@ def add_follower(request):
             followed_user = followed_form.cleaned_data['followed_user']
 
             pos = User.objects.filter(username=followed_user)[0]
-            print('pos:', pos)
 
-
-            # print('entry:', type(followed_user), new_followed_user)
             new_entry = UserFollows(user=request.user, followed_user=pos)
             new_entry.save()
 
             return redirect('subscribers')
 
     return render(request, 'webapp/follow_users_form.html',
-                  {'followed_users': followed_users, 'followed_form': followed_form, 'follower_users': follower_users})
-"""
-    if request.method == "POST":
-        followed_form = FollowUsersForm(request.POST)
-
-        if followed_form.is_valid():
-            followed_form.save(commit=False)
-            # new_followed_user = followed_form.cleaned_data
-            new_followed_user = get_object_or_404(UserFollows, id=follow_form.cleaned_data['new_followed_user'])
-            if request.user.follows.filter(id=followed_user.id).exists():
-                new_user = request.user
-
-            new_entry = UserFollows(user=new_user, followed_user=new_followed_user)
-            new_entry.save()
-            # print('new_followed_user', new_followed_user.id)
-            return redirect('subscribers')
-        
-        # followed_form = form.save(commit=False)
-
-        
-        if username != f'{request.user}':
-            user = models.User.objects.get(id=request.user.id)
-            followed_user = models.User.objects.filter(username=username)[0]
-            if followed_user is not None:
-                add_follower = models.UserFollows(user=user, followed_user=followed_user)
-                add_follower.save()
-        else:
-        
-
-
+                  {'followed_users': followed_users,
+                   'followed_form': followed_form,
+                   'follower_users': follower_users})
 
 
 @receiver(pre_save, sender=UserFollows)
 def check_self_following(sender, instance, **kwargs):
-    if instance.follower == instance.user:
+    if instance.followed_user == instance.user:
         raise ValidationError('You can not follow yourself')
-"""
 
 
 @login_required
@@ -251,9 +213,17 @@ def unfollow(request, user_id):
     return redirect('subscribers')
 
 
-
 @login_required
 def delete_tickets(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
     ticket.delete()
+    return redirect('flow')
+
+
+@login_required
+def delete_reviews(request, ticket_id, review_id):
+    ticket = get_object_or_404(Ticket, id=ticket_id)
+    review = get_object_or_404(Review, id=review_id)
+    ticket.delete()
+    review.delete()
     return redirect('flow')

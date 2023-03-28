@@ -5,48 +5,47 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-
-
-# import uuid
+from PIL import Image
 
 
 class User(AbstractUser):
     pass
 
 
-"""
-    
-    CREATOR = "CREATOR"
-    SUBSCRIBER = "SUBSCRIBER"
-
-    ROLE_CHOICES = (
-        (CREATOR, "followed_by"),
-        (SUBSCRIBER, "following"),
-         )
-    role = models.CharField(max_length=30, choices=ROLE_CHOICES, verbose_name='rôle')
-    
-"""
-
-
 class Ticket(models.Model):
-    # Your Ticket model definition goes here
-    # user = models.ManyToManyField(User)
-    # id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    IMAGE_MAX_SIZE = (200, 200)
+
     title = models.CharField(max_length=128)
     description = models.TextField(max_length=2048, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
-
-    # user = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    # image
+    image = models.ImageField(verbose_name='image', null=True, blank=True)
 
     def __str__(self):
         return self.title  # + ' | ' + str(self.user)
 
+    def resize_image(self):
+        try:
+            image = Image.open(self.image)
+            image.thumbnail(self.IMAGE_MAX_SIZE)
+            image.save(self.image.path)
+        except:
+            pass
+
+    def save(self, *args, **kwargs):
+        if self.image is None:
+            pass
+        else:
+            super().save(*args, **kwargs)
+            self.resize_image()
     """
-    def get_absolute_url(self):
-        return reverse('my_tickets' , args=(str(self.id)))
-        # return reverse('flow')
+    @register.simple_tag
+    def template_exists(template_name):
+        try:
+            django.template.loader.get_template(template_name)
+            return "Template exists"
+        except template.TemplateDoesNotExist:
+            return "Template doesn't exist"
     """
 
 
@@ -62,7 +61,7 @@ class Review(models.Model):
     time_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.headline  #  + ' | ' + str(self.user)
+        return self.headline
 
 
 class UserFollows(models.Model):
@@ -83,5 +82,3 @@ class UserFollows(models.Model):
         # return str(followed_user)
         return '{} follows  {}'.format(self.user, self.followed_user)
     """
-
-

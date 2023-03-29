@@ -101,6 +101,8 @@ def create_ticket(request, ticket_id=None):  # Bouton demander une critique(ask 
         ticket_form = forms.TicketForm(instance=ticket_instance)
         return render(request, 'webapp/create_ticket.html', context={'ticket_form': ticket_form})
     if request.method == "POST":
+        print('request:', request.POST)
+        print('requestFILES:', request.FILES)
         ticket_form = forms.TicketForm(request.POST, request.FILES, instance=ticket_instance)
         if ticket_form.is_valid():
             new_ticket = ticket_form.save(commit=False)
@@ -110,9 +112,9 @@ def create_ticket(request, ticket_id=None):  # Bouton demander une critique(ask 
 
 
 @login_required
-def create_original_review(request, ticket_id=None, review_id=None):
-    ticket = (Ticket.objects.get(id=ticket_id) if ticket_id is not None else None)
-    review = (Review.objects.get(id=review_id) if review_id is not None else None)
+def create_original_review(request):
+    # ticket = (Ticket.objects.get(id=ticket_id) if ticket_id is not None else None)
+    # review = (Review.objects.get(id=review_id) if review_id is not None else None)
     if request.method == "GET":
         ticket_form = forms.TicketForm()
         review_form = forms.CreateOriginalReviewForm()
@@ -120,8 +122,11 @@ def create_original_review(request, ticket_id=None, review_id=None):
                       context={'ticket_form': ticket_form, 'review_form': review_form})
 
     if request.method == "POST":
+        print('requestFILES:', request.FILES)
+        print('request:', request.POST)
         review_form = forms.CreateOriginalReviewForm(request.POST)
-        ticket_form = forms.TicketForm(request.POST, request.FILES, instance=ticket)
+        ticket_form = forms.TicketForm(request.POST, request.FILES)
+        print('requestFILES:', request.FILES)
         if any([review_form.is_valid(), ticket_form.is_valid()]):
             ticket = ticket_form.save(commit=False)
             ticket.user = request.user
@@ -132,7 +137,7 @@ def create_original_review(request, ticket_id=None, review_id=None):
             review = review_form.save(commit=False)
             review.ticket = ticket
             review.user = request.user
-            review.time_created = timezone.now()
+            # review.time_created = timezone.now()
             review.save()
             return redirect('flow')
 

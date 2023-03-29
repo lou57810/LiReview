@@ -33,10 +33,8 @@ class Ticket(models.Model):
             pass
 
     def save(self, *args, **kwargs):
-        if self.image is None:
-            pass
-        else:
-            super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
+        if self.image is not None:
             self.resize_image()
     """
     @register.simple_tag

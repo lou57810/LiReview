@@ -16,32 +16,8 @@
          {% elif review.rating == 5 %}  &#9733 &#9733 &#9733 &#9733 &#9733
          {% endif %}
      </p>
-    <div class="ticket_header">
-        <p>{% if ticket.user.id == user.id %}
-                {% get_poster_display ticket.user %}  avez demandé une critique:
-                <small>{{ ticket.time_created }}</small></p>
-            {% else %}
-                <p>{{ ticket.user }}  a demandé une critique:
-                <small>{{ ticket.time_created }}</small></p>
-            {% endif %}
 
-    </div>
-    <div class="article_ticket">
-    <!--{#% include './ticket_snippets.html' %}-->
-        <div class="ticket_body">
-               Titre <p>{{ ticket.title }}</p>
-                Description {{ ticket.description }}
 
-                <!--{#% template_exists 'someapp/sometemplate.html' %}-->
-                <p>
-                    {% if ticket.image.url is not None %}
-                        <img src="{{ ticket.image.url }}">
-                    {% endif %}
-                </p>
-            <p><a href="{% url 'response-reviews' ticket_id=instance.id %}">
-            <button class="btn btn-outline-secondary">Créer une critique</button></a></p>
-        </div>
-    </div>
 
 </div>
 

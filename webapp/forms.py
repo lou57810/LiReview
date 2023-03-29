@@ -46,9 +46,11 @@ class TicketForm(ModelForm):
         model = models.Ticket
         fields = ['title', 'description', 'image']
 
+        """
         def __init__(self, *args, **kwargs):
             super(TicketForm, self).__init__(*args, **kwargs)
             self.fields['image'].required = False
+        """
 
 
 class CreateOriginalReviewForm(ModelForm):

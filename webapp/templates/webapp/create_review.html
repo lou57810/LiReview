@@ -5,17 +5,8 @@
 <p>Créer une critique originale</p>
 <br/><br/>
 <p>Livre / Article</p></br></br>
-        <form method="POST" action="{% url 'create-reviews' %}">
-                {% if ticket_form.instance.id %}
-                        <form method="POST" action="{% url 'create-ticket' ticket_id=ticket_form.instance.id %}" enctype='multipart/form-data'></form>
-                {% else %}
-                        <form method="POST" action="{% url 'create-ticket' %}" enctype='multipart/form-data'>
-                {% endif %}
-                {% if review_form.instance.id %}
-                        <form method="POST" action="{% url 'create-reviews' %}" review_id="review_form.instance.id %}">
-                {% else %}
-                        <form method="POST" action="{% url 'create-reviews' %}">
-                {% endif %}
+        <form method="POST" action="{% url 'create-reviews' %}" enctype='multipart/form-data'>
+
 
 
         {% csrf_token %}

@@ -1,6 +1,6 @@
 {% load webapp_extras %}
 
-<div class="article_review">
+
     <!-- c'est vous l'auteur -->
     {% get_poster_display review.user %}  avez publié une critique :
     <p>{{ review.headline }}
@@ -9,15 +9,15 @@
      <p>{{ review.body }}</p>
 
      <p class="rating">
-         {% if review.rating == 1 %} &#9733
-         {% elif review.rating == 2 %}  &#9733 &#9733
-         {% elif review.rating == 3 %}  &#9733 &#9733 &#9733
-         {% elif review.rating == 4 %}  &#9733 &#9733 &#9733 &#9733
+         {% if review.rating == 1 %}    &#9733 &#9734 &#9734 &#9734 &#9734
+         {% elif review.rating == 2 %}  &#9733 &#9733 &#9734 &#9734 &#9734
+         {% elif review.rating == 3 %}  &#9733 &#9733 &#9733 &#9734 &#9734
+         {% elif review.rating == 4 %}  &#9733 &#9733 &#9733 &#9733 &#9734
          {% elif review.rating == 5 %}  &#9733 &#9733 &#9733 &#9733 &#9733
          {% endif %}
      </p>
 
 
 
-</div>
+
 

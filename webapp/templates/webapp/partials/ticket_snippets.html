@@ -1,6 +1,6 @@
 {% load webapp_extras %}
+{% load static %}
 
-<div class="article_ticket">
 
     <div class="ticket_header">
         <p>{% if ticket.user.id == user.id %}
@@ -12,10 +12,9 @@
             {% endif %}
 
     </div>
-    <div class="ticket_body">
+
             <p>{{ ticket.title }}</p>
             {{ ticket.description }}
-
 
             <p>
                 {% if ticket.image.url is not None %}
@@ -25,6 +24,6 @@
 
             <p><a href="{% url 'response-reviews' ticket_id=ticket.id %}">
             <button class="btn btn-outline-secondary">Créer une critique</button></a></p>
-    </div>
-</div>
+
+
 

@@ -53,7 +53,7 @@ class TicketForm(ModelForm):
         """
 
 
-class CreateOriginalReviewForm(ModelForm):
+class CreateReviewForm(ModelForm):
     CHOICES = [
         ('1', 'Option 1'),
         ('2', 'Option 2'),

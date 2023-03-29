@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from . import forms, models
 from webapp.models import Ticket, Review, User, UserFollows
-from webapp.forms import TicketForm, CreateOriginalReviewForm, \
+from webapp.forms import TicketForm, CreateReviewForm, \
     CreateResponseReviewForm, LoginForm, FollowUsersForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
@@ -112,33 +112,29 @@ def create_ticket(request, ticket_id=None):  # Bouton demander une critique(ask 
 
 
 @login_required
-def create_original_review(request):
-    # ticket = (Ticket.objects.get(id=ticket_id) if ticket_id is not None else None)
-    # review = (Review.objects.get(id=review_id) if review_id is not None else None)
+def create_review(request):
     if request.method == "GET":
         ticket_form = forms.TicketForm()
-        review_form = forms.CreateOriginalReviewForm()
+        review_form = forms.CreateReviewForm()
         return render(request, 'webapp/create_review.html',
                       context={'ticket_form': ticket_form, 'review_form': review_form})
 
     if request.method == "POST":
-        print('requestFILES:', request.FILES)
-        print('request:', request.POST)
-        review_form = forms.CreateOriginalReviewForm(request.POST)
+        review_form = forms.CreateReviewForm(request.POST)
         ticket_form = forms.TicketForm(request.POST, request.FILES)
-        print('requestFILES:', request.FILES)
-        if any([review_form.is_valid(), ticket_form.is_valid()]):
-            ticket = ticket_form.save(commit=False)
-            ticket.user = request.user
-            # ticket.time_created = timezone.now()
-            ticket.save()
 
-            # review_ticket = Ticket.objects.get(id=ticket.id)
-            review = review_form.save(commit=False)
-            review.ticket = ticket
-            review.user = request.user
+        if any([review_form.is_valid(), ticket_form.is_valid()]):
+            post = ticket_form.save(commit=False)
+            post.user = request.user
+            # ticket.time_created = timezone.now()
+            post.save()
+
+            review_ticket = Ticket.objects.get(id=post.id)
+            post = review_form.save(commit=False)
+            post.ticket = review_ticket
+            post.user = request.user
             # review.time_created = timezone.now()
-            review.save()
+            post.save()
             return redirect('flow')
 
 
@@ -174,6 +170,7 @@ def add_follower(request):
 
     followed_model_users = models.UserFollows.objects.filter(user=request.user)
     following_model_users = models.UserFollows.objects.filter(followed_user=request.user)
+    followed_form = FollowUsersForm()
 
     follower_users = []
     followed_users = []

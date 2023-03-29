@@ -5,7 +5,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 import webapp.views
-from webapp.views import flow_view, create_ticket, create_original_review, \
+
+from webapp.views import flow_view, create_ticket, create_review, \
     owner_post_view, create_response_review, delete_tickets, add_follower
 
 urlpatterns = [
@@ -16,7 +17,7 @@ urlpatterns = [
     path('create-ticket/', webapp.views.create_ticket, name='create-ticket'),  # create ticket
     path('create-ticket/<int:ticket_id>', webapp.views.create_ticket, name='create-ticket'),  # modify ticket(post)
     path('view-posts/', webapp.views.owner_post_view, name='view-posts'),  # Affichage post utilisateur.
-    path('create-reviews/', webapp.views.create_original_review, name='create-reviews'),
+    path('create-reviews/', webapp.views.create_review, name='create-reviews'),
     path('response-reviews/<int:ticket_id>', webapp.views.create_response_review, name='response-reviews'),
     path('subscribers/', webapp.views.add_follower, name='subscribers'),
     path('subscribers/<int:user_id>', webapp.views.unfollow, name='unfollow'),

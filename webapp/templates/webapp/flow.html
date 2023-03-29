@@ -14,14 +14,17 @@
 <div class="article">
 
     {% for instance in ordered_tickets_and_reviews %}
-
             {% if instance|model_type == 'Ticket' %}
-                {% include 'webapp/partials/ticket_snippets.html' with ticket=instance %}
-
+                    <div class="article_ticket">
+                       testTCKET {% include 'webapp/partials/ticket_snippets.html' with ticket=instance %}
+                    </div>
             {% elif instance|model_type == 'Review' %}
-                {% include 'webapp/partials/review_snippets.html' with review=instance %}
-
-
+                <div class="article_review">
+                 testREVIEW  {% include 'webapp/partials/review_snippets.html' with review=instance %}
+                    <div class="article_ticket">
+                        testTiCKET {% include 'webapp/partials/ticket_snippets.html' with ticket=instance %}
+                    </div>
+                </div>
             {% endif %}
     {% endfor %}
 

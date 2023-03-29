@@ -27,6 +27,7 @@
 .container .article .article_ticket {
     border: solid 1px #000;
     margin: 10px;
+    border: solid 1px #000;
     border-radius: 5px;
 }
 
@@ -35,7 +36,7 @@
     border: solid 1px #000;
     border-radius: 5px;
 }
-
+/*
 .container .article .article_review .review_ticket {
     margin: 10px;
     height: 400px;
@@ -53,8 +54,8 @@
      border-radius: 5px;
      }
 
+*/
 
-    */
 /*
 .container .article-review .ticket_body {
     margin: 20px;

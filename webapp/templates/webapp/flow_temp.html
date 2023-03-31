@@ -21,20 +21,20 @@
 <!------------------------------------ Feed ------------------------------------->
 <div class="article">
 
-    {% for instance in page_post %}
+    {% for instance in ordered_tickets_and_reviews %}
+
             {% if instance|model_type == 'Ticket' %}
-                    <div class="article_ticket">
-                       {% include 'webapp/partials/ticket_snippets.html' with ticket=instance %}
-                    </div>
+                <div class="article_ticket">
+            TWO    {% include 'webapp/partials/ticket_snippets.html' with ticket=instance %}
+                </div>
             {% elif instance|model_type == 'Review' %}
                 <div class="article_review">
-                   {% include 'webapp/partials/review_snippets.html' with review=instance %}
-                    <div class="inside_ticket">
-                         {% include 'webapp/partials/ticket_snippets.html' with ticket=instance %}
-                    </div>
+            TWO    {% include 'webapp/partials/review_snippets.html' with review=instance %}
                 </div>
             {% endif %}
     {% endfor %}
+
+
 
 </div>
     <span>

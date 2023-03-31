@@ -1,29 +1,30 @@
 {% load webapp_extras %}
-{% load static %}
 
 
-    <div class="ticket_header">
-        <p>{% if ticket.user.id == user.id %}
-                {% get_poster_display ticket.user %}  avez demandé une critique:
-                <small>{{ ticket.time_created }}</small></p>
-            {% else %}
-                <p>{{ ticket.user }}  a demandé une critique:
-                <small>{{ ticket.time_created }}</small></p>
-            {% endif %}
 
-    </div>
 
-            <p>{{ ticket.title }}</p>
-            {{ ticket.description }}
+        <p>{% if instance.user.id == user.id %}
 
-            <p>
-                {% if ticket.image.url is not None %}
-                    <img src="{{ ticket.image.url }}">
+
+                {% get_poster_display instance.user %}  avez demandé une critique:
+                <small>{{ instance.time_created }}</small></p>
+                <p>{{ instance.user }}  a demandé une critique:
+
+                <!--<small>{#{ ticket.time_created }}</small></p>-->
+
+            <p class="front_img">
+                {% if instance.ticket.image.url is not None %}
+                    <img src="{{ instance.ticket.image.url }}">
                 {% endif %}
             </p>
+            <p>{{ instance.ticket.title }}</p>
+            {{ instance.ticket.description }}
 
+
+            {% endif %}
             <p><a href="{% url 'response-reviews' ticket_id=ticket.id %}">
             <button class="btn btn-outline-secondary">Créer une critique</button></a></p>
+
 
 
 

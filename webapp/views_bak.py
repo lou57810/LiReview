@@ -81,19 +81,16 @@ def flow_view(request):
         Q(user=request.user) | Q(user=request.user) | Q(user__in=followed_users_list)
     )
 
-
     ordered_tickets_and_reviews = sorted(chain(tickets, reviews),
-                                        key=lambda instance: instance.time_created,
-                                        reverse=True)
-
-    print("ordered_tickets_and_reviews", ordered_tickets_and_reviews)
+                                         key=lambda instance: instance.time_created,
+                                         reverse=True)
 
     paginator = Paginator(ordered_tickets_and_reviews, 3)
     page = request.GET.get('page')
-    page_post = paginator.get_page(page)
+    page_obj = paginator.get_page(page)
 
     return render(request, 'webapp/flow.html', context={
-        'page_post': page_post})
+        'ordered_tickets_and_reviews': page_obj, 'page_obj': page_obj})
 
 
 @login_required
@@ -126,17 +123,17 @@ def create_review(request):
         ticket_form = forms.TicketForm(request.POST, request.FILES)
 
         if any([review_form.is_valid(), ticket_form.is_valid()]):
-            ticket = ticket_form.save(commit=False)
-            ticket.user = request.user
-            # post.time_created = timezone.now()
-            ticket.save()
+            post = ticket_form.save(commit=False)
+            post.user = request.user
+            # ticket.time_created = timezone.now()
+            post.save()
 
-            review_ticket = Ticket.objects.get(id=ticket.id)
-            review = review_form.save(commit=False)
-            review.ticket = review_ticket
-            review.user = request.user
-            # post.time_created = timezone.now()
-            review.save()
+            review_ticket = Ticket.objects.get(id=post.id)
+            post = review_form.save(commit=False)
+            post.ticket = review_ticket
+            post.user = request.user
+            # review.time_created = timezone.now()
+            post.save()
             return redirect('flow')
 
 

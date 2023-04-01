@@ -48,6 +48,10 @@
     float: left;
 }
 
+.paginator {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    }
 
 /*
 .container .article .article_review .review_ticket {

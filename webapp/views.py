@@ -78,22 +78,17 @@ def flow_view(request):
     )
 
     reviews = Review.objects.filter(
-        Q(user=request.user) | Q(user=request.user) | Q(user__in=followed_users_list)
-    )
-
+        Q(user=request.user) | Q(user=request.user) | Q(user__in=followed_users_list))
 
     ordered_tickets_and_reviews = sorted(chain(tickets, reviews),
                                         key=lambda instance: instance.time_created,
                                         reverse=True)
 
-    print("ordered_tickets_and_reviews", ordered_tickets_and_reviews)
-
     paginator = Paginator(ordered_tickets_and_reviews, 3)
     page = request.GET.get('page')
     page_post = paginator.get_page(page)
 
-    return render(request, 'webapp/flow.html', context={
-        'page_post': page_post})
+    return render(request, 'webapp/flow.html', context={'page_post': page_post})
 
 
 @login_required

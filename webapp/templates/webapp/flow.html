@@ -20,39 +20,31 @@
 
 <!------------------------------------ Feed ------------------------------------->
 <div class="article">
-
+    {{ page_post }}
     {% for instance in page_post %}
-            {% if instance|model_type == 'Ticket' %}
-                    <div class="article_ticket">
-                       {% include 'webapp/partials/ticket_snippets.html' with ticket=instance %}
-                    </div>
-            {% elif instance|model_type == 'Review' %}
-                <div class="article_review">
-                   {% include 'webapp/partials/review_snippets.html' with review=instance %}
-                    <div class="inside_ticket">
-                         {% include 'webapp/partials/ticket_snippets.html' with ticket=instance %}
-                    </div>
-                </div>
-            {% endif %}
+        {% if instance|model_type == 'Ticket' %}
+                 {% include 'webapp/partials/ticket_snippets.html' with ticket=instance edit_ticket='True' %}
+
+        {% elif instance|model_type == 'Review' %}
+               {% include 'webapp/partials/review_snippets.html' with review=instance ticket=instance.ticket edit_review='True' %}
+
+        {% endif %}
     {% endfor %}
-
 </div>
-    <span>
-        {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; première</a>
 
+<div class="paginator">
+    <span>
+        {% if page_post.has_previous %}
+            <a href="?page=1">&laquo; première</a>
             <a href="?page={{ page_obj.previous_page_number }}"><button>précédente</button></a>
         {% endif %}
 
-        <span>
-            Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}.
+        <span>Page {{ page_post.number }} sur {{ page_post.paginator.num_pages }}.</span>
 
-        </span>
-
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}"><button>suivante</button></a>
-
-            <a href="?page={{ page_obj.paginator.num_pages }}"><button>dernière &raquo;</button></a>
+        {% if page_post.has_next %}
+            <a href="?page={{ page_post.next_page_number }}"><button>suivante</button></a>
+            <a href="?page={{ page_post.paginator.num_pages }}"><button>dernière &raquo;</button></a>
         {% endif %}
     </span>
+</div>
 {% endblock %}

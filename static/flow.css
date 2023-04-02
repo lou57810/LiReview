@@ -60,7 +60,6 @@
     border: solid 1px #000;
     border-radius: 5px;
      }
-
 .container .article .article_review p {
     display: flex;
     }
@@ -70,7 +69,6 @@
      margin-bottom: 10px;
      border-radius: 5px;
      }
-
 */
 
 /*
@@ -79,18 +77,15 @@
     border: solid 1px #000;
     border-radius: 5px;
      }
-
 .article_review .ticket_body {
     margin: 20px;
     border: solid 1px #000;
     border-radius: 5px;
      }
-
 .article .article-ticket {
     margin: 10px;
     border-radius: 5px;
 }
-
 .article .article-ticket .article_header {
     display: flex;
     }

@@ -8,7 +8,7 @@
 <!------------------------------------ Buttons ---------------------------------->
     <div class="container_button">
         <ul>
-            <li><a href="{% url 'create-ticket' %}">
+            <li><a href="{% url 'create-tickets' %}">
                 <button type="button" class="btn btn-outline-secondary btn-block" >
                     Demander une critique</button></a></li>
             <li><a href="{% url 'create-reviews' %}">
@@ -36,7 +36,7 @@
     <span>
         {% if page_post.has_previous %}
             <a href="?page=1">&laquo; première</a>
-            <a href="?page={{ page_obj.previous_page_number }}"><button>précédente</button></a>
+            <a href="?page={{ page_post.previous_page_number }}"><button>précédente</button></a>
         {% endif %}
 
         <span>Page {{ page_post.number }} sur {{ page_post.paginator.num_pages }}.</span>

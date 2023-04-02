@@ -5,8 +5,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 import webapp.views
-from webapp.views import flow_view, create_ticket, create_review,\
-    owner_post_view, create_response_review, delete_tickets, add_follower
+from webapp.views import flow_view, create_ticket, create_review, owner_post_view, create_response_review, delete_tickets, add_follower
 
 
 urlpatterns = [
@@ -15,8 +14,8 @@ urlpatterns = [
     path('', views.LoginPage.as_view(), name='login'),
     path('signup/', views.signup_page, name='signup'),
     path('flow/', views.flow_view, name='flow'),
-    path('create-ticket/', views.create_ticket, name='create-ticket'),  # Demande ticket
-    path('create-ticket/<int:ticket_id>', views.create_ticket, name='create-ticket'),  # Modifie ticket prérempli
+    path('create-tickets/', views.create_ticket, name='create-tickets'),  # Demande ticket
+    path('create-tickets/<int:ticket_id>', views.create_ticket, name='create-tickets'),  # Modifie ticket prérempli
     path('view-posts/', views.owner_post_view, name='view-posts'),
     path('create-reviews/', views.create_review, name='create-reviews'),
     path('response-reviews/', views.create_response_review, name='response-reviews'),

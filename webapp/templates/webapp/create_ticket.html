@@ -4,9 +4,9 @@
 <p><h4>Créer un ticket</h4></p>
 <br/><br/>
         {% if ticket_form.instance.id %}
-                <form method="POST" action="{% url 'create-ticket' ticket_id=ticket_form.instance.id %}" enctype='multipart/form-data'></form>
+                <form method="POST" action="{% url 'create-tickets' ticket_id=ticket_form.instance.id %}" enctype='multipart/form-data'>
         {% else %}
-                <form method="POST" action="{% url 'create-ticket' %}" enctype='multipart/form-data'>
+                <form method="POST" action="{% url 'create-tickets' %}" enctype='multipart/form-data'>
         {% endif %}
                 {{ ticket_form.as_p }}
                 {% csrf_token %}

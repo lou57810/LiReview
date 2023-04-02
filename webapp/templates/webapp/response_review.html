@@ -23,7 +23,7 @@
 
         <form method="POST" action="{% url 'create-reviews' %}">
                 {% if review_form.instance.id %}
-                        <form method="POST" action="{% url 'create-reviews' %}" review_id="review_form.instance.id %}">
+                        <form method="POST" action="{% url 'create-reviews'  review_id=review_form.instance.id %}">
                 {% else %}
                         <form method="POST" action="{% url 'create-reviews' %}">
                 {% endif %}

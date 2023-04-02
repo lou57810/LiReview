@@ -96,10 +96,10 @@ def create_ticket(request, ticket_id=None):  # Bouton demander une critique(ask 
     ticket_instance = (Ticket.objects.get(id=ticket_id) if ticket_id is not None else None)
 
     if request.method == "GET":
-        ticket_form = forms.TicketForm(instance=ticket_instance)
+        ticket_form = forms.TicketForm(request.FILES, instance=ticket_instance, )
         return render(request, 'webapp/create_ticket.html', context={'ticket_form': ticket_form})
-    if request.method == "POST":
 
+    if request.method == "POST":
         ticket_form = forms.TicketForm(request.POST, request.FILES, instance=ticket_instance)
         if ticket_form.is_valid():
             new_ticket = ticket_form.save(commit=False)
@@ -141,7 +141,7 @@ def create_response_review(request, ticket_id):
 
     if request.method == "GET":
         # review_form = forms.CreateResponseReviewForm()
-        return render(request, 'webapp/response_review.html', {
+        return render(request, 'webapp/response_review.html', context={
             'ticket': ticket, 'review_form': review_form})
 
     elif request.method == 'POST':
@@ -159,7 +159,7 @@ def create_response_review(request, ticket_id):
 def owner_post_view(request):
     tickets = models.Ticket.objects.filter(user=request.user).order_by('-time_created')
     reviews = models.Review.objects.filter(user=request.user).order_by('-time_created')
-    return render(request, "webapp/view_posts.html", {'tickets': tickets, 'reviews:': reviews})
+    return render(request, "webapp/view_posts.html", context={'tickets': tickets, 'reviews': reviews})
 
 
 @login_required
@@ -196,12 +196,6 @@ def add_follower(request):
                   {'followed_users': followed_users,
                    'followed_form': followed_form,
                    'follower_users': follower_users})
-
-
-@receiver(pre_save, sender=UserFollows)
-def check_self_following(sender, instance, **kwargs):
-    if instance.followed_user == instance.user:
-        raise ValidationError('You can not follow yourself')
 
 
 @login_required

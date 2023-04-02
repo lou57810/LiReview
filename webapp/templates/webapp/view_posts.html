@@ -16,10 +16,25 @@
                     <img src="{{ ticket.image.url }}">
                 {% endif %}
             </p>
+
         <a href="{% url 'create-ticket' ticket_id=ticket.id %}"><button class=
-                    "btn btn-secondary">Modifier</button>
-        </a><a href="{% url 'delete-tickets' ticket_id=ticket.id %}">
+                    "btn btn-secondary">Modifier</button></a>
+        <a href="{% url 'delete-tickets' ticket_id=ticket.id %}">
                     <button class="btn btn-secondary">Supprimer</button></a></br></br>
+    </div>
+    {% endfor %}
+    {% for review in reviews %}
+    <div class="article_post_review">
+        <p>Review - {{ review.user }}</p>
+        <p>{{ review.headline</p>
+        <p>{{ review.body</p>
+        <small>{{ ticket.time_created }}</small>
+
+        <a href="{% url 'create-review' review_id=review.id %}"><button class=
+                    "btn btn-secondary">Modifier</button></a>
+        <a href="{% url 'delete-tickets' review_id=ticket.id %}">
+                    <button class="btn btn-secondary">Supprimer</button></a></br></br>
+
     </div>
     {% endfor %}
 

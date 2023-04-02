@@ -91,6 +91,12 @@ text-align: left;
     border-radius: 5px;
     border: solid 1px #000;
 }
+
+.article_post .article_post_review {
+    margin: 10px;
+    border-radius: 5px;
+    border: solid 1px #000;
+}
 /* =============================== */
 
 /* =========== page follow_users_form =============*/
@@ -122,4 +128,3 @@ text-align: left;
     border: 2px solid black;
 
   }
-

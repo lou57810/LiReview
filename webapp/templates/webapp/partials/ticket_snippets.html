@@ -2,29 +2,25 @@
 
 <div class="article_ticket">
 
-TICKET:
-        {% if ticket.user == instance.user %}
-            {% get_poster_display instance.user %}   avez demandé une critique
+<p>TICKET:</p>
+        <div class="front_img">
+            {% if post.image.url is not None %}
+                <img src="{{ post.image.url }}">
+            {% endif %}
+        </div>
+        <p>{% if post.user.id == user.id %}
+            {% get_poster_display post.user %}   avez demandé une critique
+        {% else %}
+            {{ post.user.username }} a demandé une critique
+        {% endif %}</p>
+                <p><small>{{ post.time_created }}</small></p>
 
+        <p>{{ post.title }}</p>
 
+        {{ post.description }}
+
+        {% if not post.ticket %}
+        <p><a href="{% url 'response-reviews' ticket_id=post.id %}">
+        <button class="btn btn-outline-secondary">Créer une critique</button></a></p>
         {% endif %}
-                <p><small>{{ instance.time_created }}</small></p>
-
-        <p>{{ instance.ticket.title }}</p>
-        {{ instance.ticket.description }}
-
-                    <!--{#% get_poster_display instance.user %}  a demandé une critique:
-                <small>{#{ ticket.time_created }}</small></p>-->
-
-
-            <p class="front_img">
-                {% if ticket.image.url is not None %}
-                    <img src="{{ ticket.image.url }}">
-                {% endif %}
-            </p>
-
-            <p><a href="{#% url 'response-reviews' ticket_id=ticket.id %}">
-            <button class="btn btn-outline-secondary">Créer une critique</button></a></p>
-
-
 </div>

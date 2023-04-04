@@ -68,7 +68,6 @@ def signup_page(request):
 
 @login_required
 def flow_view(request):
-
     followed_users_list = []
     for user in UserFollows.objects.filter(user=request.user):
         followed_users_list.append(user.followed_user)
@@ -76,7 +75,6 @@ def flow_view(request):
     tickets = Ticket.objects.filter(
         Q(user=request.user) | Q(user__in=followed_users_list)
     )
-
     reviews = Review.objects.filter(
         Q(user=request.user) | Q(user=request.user) | Q(user__in=followed_users_list))
 
@@ -88,19 +86,17 @@ def flow_view(request):
     page = request.GET.get('page')
     page_post = paginator.get_page(page)
 
-    return render(request, 'webapp/flow.html', context={'page_post': page_post})
+    return render(request, 'webapp/flow.html', context={'tickets': tickets, 'page_post': page_post})
 
 
 @login_required
-def create_ticket(request, ticket_id=None):  # Bouton demander une critique(ask review)
-    ticket_instance = (Ticket.objects.get(id=ticket_id) if ticket_id is not None else None)
-
+def create_ticket(request):
     if request.method == "GET":
-        ticket_form = forms.TicketForm(request.FILES, instance=ticket_instance, )
+        ticket_form = forms.TicketForm()
         return render(request, 'webapp/create_ticket.html', context={'ticket_form': ticket_form})
 
     if request.method == "POST":
-        ticket_form = forms.TicketForm(request.POST, request.FILES, instance=ticket_instance)
+        ticket_form = forms.TicketForm(request.POST, request.FILES)
         if ticket_form.is_valid():
             new_ticket = ticket_form.save(commit=False)
             new_ticket.user = request.user
@@ -159,7 +155,15 @@ def create_response_review(request, ticket_id):
 def owner_post_view(request):
     tickets = models.Ticket.objects.filter(user=request.user).order_by('-time_created')
     reviews = models.Review.objects.filter(user=request.user).order_by('-time_created')
-    return render(request, "webapp/view_posts.html", context={'tickets': tickets, 'reviews': reviews})
+    ordered_tickets_and_reviews = sorted(chain(tickets, reviews),
+                                         key=lambda instance: instance.time_created,
+                                         reverse=True)
+
+    paginator = Paginator(ordered_tickets_and_reviews, 3)
+    page = request.GET.get('page')
+    page_post = paginator.get_page(page)
+
+    return render(request, "webapp/view_posts.html", context={'page_post': page_post, 'tickets': tickets, 'reviews': reviews})
 
 
 @login_required
@@ -207,16 +211,49 @@ def unfollow(request, user_id):
 
 
 @login_required
-def delete_tickets(request, ticket_id):
+def update_ticket(request, ticket_id):
+    ticket_instance = get_object_or_404(Ticket, id=ticket_id)
+    if request.method == "GET":
+        ticket_form = forms.TicketForm(instance=ticket_instance)
+        return render(request, 'webapp/update_ticket.html', context={'ticket_form': ticket_form})
+
+    if request.method == "POST":
+        ticket_form = forms.TicketForm(request.POST, request.FILES, instance=ticket_instance)
+        if ticket_form.is_valid():
+            new_ticket = ticket_form.save(commit=False)
+            new_ticket.user = request.user
+            new_ticket.save()
+            return redirect('view-posts')
+
+
+
+@login_required
+def update_review(request, review_id):
+    review_instance = get_object_or_404(Review, id=review_id)
+    if request.method == "GET":
+        review_form = forms.CreateReviewForm(instance=review_instance)
+        return render(request, 'webapp/update_review.html', context={'review_form': review_form})
+
+    if request.method == "POST":
+        review_form = forms.CreateReviewForm(request.POST, request.FILES, instance=review_instance)
+        if review_form.is_valid():
+            new_review = review_form.save(commit=False)
+            new_review.user = request.user
+            new_review.save()
+            return redirect('view-posts')
+
+
+@login_required
+def delete_ticket(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
     ticket.delete()
     return redirect('flow')
 
 
 @login_required
-def delete_reviews(request, ticket_id, review_id):
-    ticket = get_object_or_404(Ticket, id=ticket_id)
+def delete_review(request, review_id):
+    # ticket = get_object_or_404(Ticket, id=ticket_id)
     review = get_object_or_404(Review, id=review_id)
-    ticket.delete()
+    # ticket.delete()
     review.delete()
     return redirect('flow')

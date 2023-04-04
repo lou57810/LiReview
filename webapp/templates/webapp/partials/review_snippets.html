@@ -1,25 +1,46 @@
 {% load webapp_extras %}
 
 <div class="article_review">
-    REVIEW
-    <!-- c'est vous l'auteur -->
-    {% get_poster_display review.user %}  avez publié une critique :
-    <p>{{ review.headline }}
-    <small>{{ review.time_created }}</small></p>
+    REVIEW:
+    {% if post.user.id == user.id %}
+        {% get_poster_display review.user %}  avez publié une critique :
+    {% else %}
+        {{ post.user.username }} a publié une critique.
+        <small>{{ review.time_created }}</small></p>
+    {% endif %}
 
-
+     <p>{{ review.headline }}
 
      <p class="rating">
-         {% if review.rating == 1 %}    &#9733 &#9734 &#9734 &#9734 &#9734
-         {% elif review.rating == 2 %}  &#9733 &#9733 &#9734 &#9734 &#9734
-         {% elif review.rating == 3 %}  &#9733 &#9733 &#9733 &#9734 &#9734
-         {% elif review.rating == 4 %}  &#9733 &#9733 &#9733 &#9733 &#9734
-         {% elif review.rating == 5 %}  &#9733 &#9733 &#9733 &#9733 &#9733
+         {% if post.rating == 1 %}    &#9733 &#9734 &#9734 &#9734 &#9734
+         {% elif post.rating == 2 %}  &#9733 &#9733 &#9734 &#9734 &#9734
+         {% elif post.rating == 3 %}  &#9733 &#9733 &#9733 &#9734 &#9734
+         {% elif post.rating == 4 %}  &#9733 &#9733 &#9733 &#9733 &#9734
+         {% elif post.rating == 5 %}  &#9733 &#9733 &#9733 &#9733 &#9733
          {% endif %}
      </p>
-    <div>
-        <p class='post-description'>{{ review.body }}</p>
-        {% include 'webapp/partials/ticket_snippets.html' %}
-    </div>
+    {{ review.body }}
+
+        <div class='inside_review'>
+            <p>{% if post.user.id == user.id %}
+                    {% get_poster_display post.user %}   avez demandé une critique
+                {% else %}
+                    {{ post.user.username }} a demandé une critique
+                {% endif %}</p>
+                <p><small>{{ post.time_created }}</small></p>
+            <div class="front_img">
+                {% if post.ticket.image.url is not None %}
+                    <img src="{{ post.ticket.image.url }}">
+                {% endif %}
+            </div>
+            <p>{{ post.ticket.title }}</p>
+            <p>{{ post.ticket.description }}</p>
+
+                {% if not post.ticket %}
+                <p><a href="{% url 'response-reviews' ticket_id=post.id %}">
+                <button class="btn btn-outline-secondary">Créer une critique</button></a></p>
+                {% endif %}
+        </div>
+
 
 </div>

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<p><h4>Modifier un ticket</h4></p>
+<br/><br/>
+
+                <form method="POST" action="{% url 'update-tickets' ticket_id=ticket_form.instance.id %}" enctype='multipart/form-data'>
+                        {{ ticket_form.as_p }}
+                        {% csrf_token %}
+                <!--<button class="btn btn-secondary">Envoyer</button>-->
+                <input type="submit">
+
+
+<!--<button type="submit" >Télécharger fichier</button>-->
+</form>
+
+
+{% endblock %}

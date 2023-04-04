@@ -36,7 +36,7 @@
     border-radius: 5px;
 }
 
-.article_review .inside_ticket {
+.article_review .inside_review {
     margin: 10px;
     padding: 20px;
     height: 350px;
@@ -44,7 +44,16 @@
     border-radius: 5px;
 }
 
-.article_review .inside_ticket .front_img {
+.article_ticket  {
+    margin: 10px;
+    padding: 20px;
+    height: 350px;
+    border: solid 1px #000;
+    border-radius: 5px;
+}
+
+.front_img {
+    height: 300px;
     float: left;
 }
 

@@ -21,15 +21,18 @@
 <!------------------------------------ Feed ------------------------------------->
 <div class="article">
     {{ page_post }}
-    {% for instance in page_post %}
-        {% if instance|model_type == 'Ticket' %}
-                 {% include 'webapp/partials/ticket_snippets.html' with ticket=instance edit_ticket='True' %}
+    {% for post in page_post %}
 
-        {% elif instance|model_type == 'Review' %}
-               {% include 'webapp/partials/review_snippets.html' with review=instance ticket=instance.ticket edit_review='True' %}
+        {% if post|model_type == 'Review' %}
+               {% include 'webapp/partials/review_snippets.html' with review=post ticket=post.ticket edit_review='True' %}
+
+        {% elif post|model_type == 'Ticket' %}
+                {% include 'webapp/partials/ticket_snippets.html' with ticket=post %}
 
         {% endif %}
+
     {% endfor %}
+
 </div>
 
 <div class="paginator">

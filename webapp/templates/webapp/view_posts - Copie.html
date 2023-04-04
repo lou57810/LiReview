@@ -27,7 +27,28 @@
 
     {% for review in reviews %}
 
-            {% include 'webapp/partials/review_snippets.html' with review=post post=review %}
+            <div class="article_post_review">
+                <p>Review - {{ review.user }}</p>
+                <p>{{ review.headline }}</p>
+                <p>{{ review.body }}</p>
+                <small>{{ review.time_created }}</small>
+
+                <a href="{% url 'update-reviews' review_id=review.id %}"><button class=
+                            "btn btn-secondary">Modifier</button></a>
+                <a href="{% url 'delete-reviews' review_id=review.id %}">
+                            <button class="btn btn-secondary">Supprimer</button></a></br></br>
+
+            </div>
+            <div class="article_post_ticket">
+                <p>Ticket - {{ review.ticket.user }}</p>
+                <p>{{ review.ticket.title }}</p>
+                <p>{{ review.ticket.description }}</p>
+                <small>{{ review.ticket.time_created }}</small><!--<a href="{#% url 'response-reviews' %}">-->
+                <p>
+                    {% if review.ticket.image.url is not None %}
+                        <img src="{{ review.ticket.image.url }}">
+                    {% endif %}
+                </p>
 
     {% endfor %}
 

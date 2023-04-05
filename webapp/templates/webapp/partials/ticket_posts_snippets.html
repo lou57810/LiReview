@@ -1,0 +1,29 @@
+{% load webapp_extras %}
+{% load static %}
+<div class="article_ticket">
+
+<p>TICKET:</p>
+        <div class="front_img">
+            {% if post.image.url is not None %}
+                <img src="{{ post.image.url }}">
+            {% endif %}
+        </div>
+        <div>
+        <p>{% if post.user.id == user.id %}
+            {% get_poster_display post.user %}   avez demandé une critique
+            {% else %}
+                {{ post.user.username }} a demandé une critique
+            {% endif %}</p>
+            <p><small>{{ post.time_created }}</small></p>
+
+        <p>{{ post.title }}</p>
+        {{ post.description }}
+        </div>
+        <div class="post_buttons">
+            <a href="{% url 'update-tickets' ticket_id=post.id %}"><button class=
+                    "btn btn-secondary">Modifier</button></a>
+
+            <a href="{% url 'delete-tickets' ticket_id=post.id %}"><button class=
+                    "btn btn-secondary">Supprimer</button></a>
+        </div>
+</div>

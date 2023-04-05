@@ -28,6 +28,7 @@
     margin: 10px;
     border: solid 1px #000;
     border-radius: 5px;
+    padding-bottom: 10px;
 }
 
 .container .article .article_ticket{
@@ -42,6 +43,13 @@
     height: 350px;
     border: solid 1px #000;
     border-radius: 5px;
+}
+
+ .article_review {
+    margin: 10px;
+    border: solid 1px #000;
+    border-radius: 5px;
+    padding-bottom: 10px;
 }
 
 .article_ticket  {
@@ -60,6 +68,10 @@
 .paginator {
     margin-top: 20px;
     margin-bottom: 30px;
+    }
+
+.article_ticket .post_buttons {
+    padding-top: 30px;
     }
 
 /*

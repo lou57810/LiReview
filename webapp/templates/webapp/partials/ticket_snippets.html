@@ -9,15 +9,17 @@
             {% endif %}
         </div>
         <p>{% if post.user.id == user.id %}
-            {% get_poster_display post.user %}   avez demandé une critique
-        {% else %}
-            {{ post.user.username }} a demandé une critique
-        {% endif %}</p>
+                {% get_poster_display post.user %}   avez demandé une critique
+            {% else %}
+                {{ post.user.username }} a demandé une critique
+            {% endif %}</p>
                 <p><small>{{ post.time_created }}</small></p>
 
         <p>{{ post.title }}</p>
 
         {{ post.description }}
+
+
 
         {% if not post.ticket %}
         <p><a href="{% url 'response-reviews' ticket_id=post.id %}">

@@ -3,34 +3,36 @@
 {% load webapp_extras %}
 {% block content %}
 <link rel="stylesheet" href="{% static 'flow.css' %}">
-<div class="article_post">
+<div class="article">
     <h4>Vos Posts</h4>
 
-    {% for ticket in tickets %}
-                <div class="article_post_ticket">
-                    <p>Ticket - {{ ticket.user }}</p>
-                    <p>{{ ticket.title }}</p>
-                    <p>{{ ticket.description }}</p>
-                    <small>{{ ticket.time_created }}</small><!--<a href="{#% url 'response-reviews' %}">-->
-                    <p>
-                        {% if ticket.image.url is not None %}
-                            <img src="{{ ticket.image.url }}">
-                        {% endif %}
-                    </p>
+    {{ page_post }}
+    {% for post in page_post %}
+        {% if post|model_type == 'Review' %}
+               {% include 'webapp/partials/review_posts_snippets.html' with review=post ticket=post.ticket edit_review='True' %}
 
-                    <a href="{% url 'update-tickets' ticket_id=ticket.id %}" ><button class=
-                                "btn btn-secondary">Modifier</button></a>
-                    <a href="{% url 'delete-tickets' ticket_id=ticket.id %}">
-                                <button class="btn btn-secondary">Supprimer</button></a></br></br>
-                </div>
+        {% elif post|model_type == 'Ticket' %}
+                {% include 'webapp/partials/ticket_posts_snippets.html' with ticket=post %}
+        {% endif %}
     {% endfor %}
 
-    {% for review in reviews %}
+</div>f
+<div class="paginator">
+    <span>
+        {% if page_post.has_previous %}
+            <a href="?page=1">&laquo; première</a>
+            <a href="?page={{ page_post.previous_page_number }}"><button>précédente</button></a>
+        {% endif %}
 
-            {% include 'webapp/partials/review_snippets.html' with review=post post=review %}
+        <span>Page {{ page_post.number }} sur {{ page_post.paginator.num_pages }}.</span>
 
-    {% endfor %}
-
+        {% if page_post.has_next %}
+            <a href="?page={{ page_post.next_page_number }}"><button>suivante</button></a>
+            <a href="?page={{ page_post.paginator.num_pages }}"><button>dernière &raquo;</button></a>
+        {% endif %}
+    </span>
 </div>
+
+
 
 {% endblock %}

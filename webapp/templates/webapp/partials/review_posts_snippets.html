@@ -1,0 +1,48 @@
+{% load webapp_extras %}
+{% load static %}
+
+<div class="article_review">
+    REVIEW:
+    {% if post.user.id == user.id %}
+        {% get_poster_display review.user %}  avez publié une critique :
+    {% else %}
+        {{ post.user.username }} a publié une critique.
+        <small>{{ review.time_created }}</small></p>
+    {% endif %}
+
+     <p>{{ review.headline }}
+
+     <p class="rating">
+         {% if post.rating == 1 %}    &#9733 &#9734 &#9734 &#9734 &#9734
+         {% elif post.rating == 2 %}  &#9733 &#9733 &#9734 &#9734 &#9734
+         {% elif post.rating == 3 %}  &#9733 &#9733 &#9733 &#9734 &#9734
+         {% elif post.rating == 4 %}  &#9733 &#9733 &#9733 &#9733 &#9734
+         {% elif post.rating == 5 %}  &#9733 &#9733 &#9733 &#9733 &#9733
+         {% endif %}
+     </p>
+    {{ review.body }}
+
+        <div class='inside_review'>
+            <p>{% if post.user.id == user.id %}
+                    {% get_poster_display post.user %}   avez demandé une critique
+                {% else %}
+                    {{ post.user.username }} a demandé une critique
+                {% endif %}</p>
+                <p><small>{{ post.time_created }}</small></p>
+            <div class="front_img">
+                {% if post.ticket.image.url is not None %}
+                    <img src="{{ post.ticket.image.url }}">
+                {% endif %}
+            </div>
+            <p>{{ post.ticket.title }}</p>
+            <p>{{ post.ticket.description }}</p>
+
+
+        </div>
+        <a href="{% url 'update-reviews' review_id=post.id %}"><button class=
+                "btn btn-secondary">Modifier</button></a>
+
+        <a href="{% url 'delete-reviews' review_id=post.id %}"><button class=
+                "btn btn-secondary">Supprimer</button></a>
+
+</div>

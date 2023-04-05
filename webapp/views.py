@@ -82,7 +82,7 @@ def flow_view(request):
                                         key=lambda instance: instance.time_created,
                                         reverse=True)
 
-    paginator = Paginator(ordered_tickets_and_reviews, 3)
+    paginator = Paginator(ordered_tickets_and_reviews, 4)
     page = request.GET.get('page')
     page_post = paginator.get_page(page)
 
@@ -136,9 +136,10 @@ def create_response_review(request, ticket_id):
     review_form = forms.CreateResponseReviewForm(request.POST)
 
     if request.method == "GET":
+        ticket_form = TicketForm(instance=ticket)
         # review_form = forms.CreateResponseReviewForm()
         return render(request, 'webapp/response_review.html', context={
-            'ticket': ticket, 'review_form': review_form})
+            'ticket_form': ticket_form, 'review_form': review_form})
 
     elif request.method == 'POST':
         review_form = forms.CreateResponseReviewForm(request.POST)
@@ -151,6 +152,8 @@ def create_response_review(request, ticket_id):
             return redirect('flow')
 
 
+
+
 @login_required
 def owner_post_view(request):
     tickets = models.Ticket.objects.filter(user=request.user).order_by('-time_created')
@@ -159,7 +162,7 @@ def owner_post_view(request):
                                          key=lambda instance: instance.time_created,
                                          reverse=True)
 
-    paginator = Paginator(ordered_tickets_and_reviews, 3)
+    paginator = Paginator(ordered_tickets_and_reviews, 4)
     page = request.GET.get('page')
     page_post = paginator.get_page(page)
 
@@ -213,6 +216,7 @@ def unfollow(request, user_id):
 @login_required
 def update_ticket(request, ticket_id):
     ticket_instance = get_object_or_404(Ticket, id=ticket_id)
+    print('id:', id)
     if request.method == "GET":
         ticket_form = forms.TicketForm(instance=ticket_instance)
         return render(request, 'webapp/update_ticket.html', context={'ticket_form': ticket_form})
@@ -232,11 +236,18 @@ def update_review(request, review_id):
     review_instance = get_object_or_404(Review, id=review_id)
     if request.method == "GET":
         review_form = forms.CreateReviewForm(instance=review_instance)
-        return render(request, 'webapp/update_review.html', context={'review_form': review_form})
+        ticket_form = forms.TicketForm()
+        return render(request, 'webapp/update_review.html', context={'ticket_form': ticket_form, 'review_form': review_form})
 
     if request.method == "POST":
-        review_form = forms.CreateReviewForm(request.POST, request.FILES, instance=review_instance)
-        if review_form.is_valid():
+        review_form = forms.CreateReviewForm(request.POST, instance=review_instance)
+        ticket_form = forms.TicketForm(request.POST, request.FILES)
+        if any([review_form.is_valid(), ticket_form.is_valid()]):
+            ticket = ticket_form.save(commit=False)
+            ticket.user = request.user
+            # post.time_created = timezone.now()
+            ticket.save()
+
             new_review = review_form.save(commit=False)
             new_review.user = request.user
             new_review.save()

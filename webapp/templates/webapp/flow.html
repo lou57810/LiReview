@@ -24,11 +24,9 @@
     {% for post in page_post %}
 
         {% if post|model_type == 'Review' %}
-               {% include 'webapp/partials/review_snippets.html' with review=post ticket=post.ticket edit_review='True' %}
-
+               {% include 'webapp/partials/review_snippets.html' with review=post %}
         {% elif post|model_type == 'Ticket' %}
                 {% include 'webapp/partials/ticket_snippets.html' with ticket=post %}
-
         {% endif %}
 
     {% endfor %}

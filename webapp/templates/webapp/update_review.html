@@ -4,10 +4,12 @@
 <p><h4>Modifier une critique</h4></p>
 <br/><br/>
         <form method="POST" action="{% url 'update-reviews' review_id=review_form.instance.id %}" enctype='multipart/form-data'>
+        <!--<form method="POST" action="{#% url 'update-reviews' ticket_id=ticket_form.instance.id %}" enctype='multipart/form-data'>-->
                 {% csrf_token %}
                 {{ review_form.as_p }}
                 {{ ticket_form.as_p }}
         <!--<button class="btn btn-secondary">Envoyer</button>-->
-        <input type="submit"></form>
+        <input type="submit">
+        </form>
 
 {% endblock %}

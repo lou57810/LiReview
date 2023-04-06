@@ -72,21 +72,26 @@ def flow_view(request):
     for user in UserFollows.objects.filter(user=request.user):
         followed_users_list.append(user.followed_user)
 
-    tickets = Ticket.objects.filter(
-        Q(user=request.user) | Q(user__in=followed_users_list)
-    )
+
+
     reviews = Review.objects.filter(
-        Q(user=request.user) | Q(user=request.user) | Q(user__in=followed_users_list))
+        Q(user=request.user) | Q(user__in=followed_users_list))
+
+    tickets = Ticket.objects.filter(
+        Q(user=request.user) | Q(user__in=followed_users_list)).exclude(review__in=reviews)
 
     ordered_tickets_and_reviews = sorted(chain(tickets, reviews),
                                         key=lambda instance: instance.time_created,
                                         reverse=True)
 
+    # Virer tickets en double:
+
     paginator = Paginator(ordered_tickets_and_reviews, 4)
     page = request.GET.get('page')
     page_post = paginator.get_page(page)
 
-    return render(request, 'webapp/flow.html', context={'tickets': tickets, 'page_post': page_post})
+    # print('pp:', page_post.object_list[0].__dict__())
+    return render(request, 'webapp/flow.html', context={'page_post': page_post})
 
 
 @login_required
@@ -136,10 +141,9 @@ def create_response_review(request, ticket_id):
     review_form = forms.CreateResponseReviewForm(request.POST)
 
     if request.method == "GET":
-        ticket_form = TicketForm(instance=ticket)
+        # ticket_form = TicketForm(instance=ticket)
         # review_form = forms.CreateResponseReviewForm()
-        return render(request, 'webapp/response_review.html', context={
-            'ticket_form': ticket_form, 'review_form': review_form})
+        return render(request, 'webapp/response_review.html', context={'ticket': ticket, 'review_form': review_form})
 
     elif request.method == 'POST':
         review_form = forms.CreateResponseReviewForm(request.POST)
@@ -147,7 +151,7 @@ def create_response_review(request, ticket_id):
             review = review_form.save(commit=False)
             review.ticket = ticket
             review.user = request.user
-            review.time_created = timezone.now()
+            # review.time_created = timezone.now()
             review.save()
             return redirect('flow')
 
@@ -232,11 +236,13 @@ def update_ticket(request, ticket_id):
 
 
 @login_required
+# def update_review(request, ticket_id, review_id):
 def update_review(request, review_id):
     review_instance = get_object_or_404(Review, id=review_id)
+    # ticket_instance = get_object_or_404(Ticket, id=ticket_id)
     if request.method == "GET":
         review_form = forms.CreateReviewForm(instance=review_instance)
-        ticket_form = forms.TicketForm()
+        ticket_form = forms.TicketForm(request.POST, request.FILES)
         return render(request, 'webapp/update_review.html', context={'ticket_form': ticket_form, 'review_form': review_form})
 
     if request.method == "POST":

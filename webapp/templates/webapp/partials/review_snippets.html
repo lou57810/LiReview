@@ -8,7 +8,7 @@
         {{ post.user.username }} a publié une critique.
         <small>{{ review.time_created }}</small></p>
     {% endif %}
-
+    <!----------------------------------------------------------------->
      <p>{{ review.headline }}
 
      <p class="rating">
@@ -36,10 +36,10 @@
             <p>{{ post.ticket.title }}</p>
             <p>{{ post.ticket.description }}</p>
 
-                {% if not post.ticket %}
-                <p><a href="{% url 'response-reviews' ticket_id=post.id %}">
-                <button class="btn btn-outline-secondary">Créer une critique</button></a></p>
-                {% endif %}
+
+            <p><a href="{% url 'response-reviews' ticket_id=post.id %}">
+            <button class="btn btn-outline-secondary">Créer une critique</button></a></p>
+
         </div>
 
 

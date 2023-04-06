@@ -24,10 +24,8 @@
 
 
     <div class="article_review">
-        <form method="POST" action="{% url 'create-reviews' %}">
-        {% if form.ticket.id %}
-            <form method="POST" action="{% url 'create-tickets' ticket_id=ticket_form.ticket.id %}">
-        {% endif %}
+            <form method="POST" action="{% url 'response-reviews' ticket_id=ticket.id %}">
+
             <p>Critique</p>
             {% csrf_token %}
             {{ ticket_form.as_p }}

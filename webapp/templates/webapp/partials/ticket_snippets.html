@@ -1,14 +1,14 @@
 {% load webapp_extras %}
 
 <div class="article_ticket">
-<p>TICKET:</p>
+
         <div class="front_img">
             {% if post.image.url is not None %}
                 <img src="{{ post.image.url }}">
             {% endif %}
         </div>
         <p>{% if post.user.id == user.id %}
-                 {{ user }}
+                 {% get_ticket_display ticket.user %} avez publié un ticket
             {% else %}
                 {{ post.user.username }} a demandé une critique
             {% endif %}</p>

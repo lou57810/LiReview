@@ -21,10 +21,10 @@
     {{ review.body }}
 
         <div class='inside_review'>
-            <p>{% if post.user.id == user.id %}
-                     Ticket : {{ user }}
+            <p>{% if post.ticket.user.id == user.id %}
+                     {% get_review_display review.user %}
                 {% else %}
-                    {{ post.user.username }} a demandé une critique
+                    Ticket - {{ post.ticket.user.username }}
                 {% endif %}</p>
                 <p><small>{{ post.time_created }}</small></p>
             <div class="front_img">
@@ -35,9 +35,10 @@
             <p>{{ post.ticket.title }}</p>
             <p>{{ post.ticket.description }}</p>
 
-
-            <p><a href="{% url 'response-reviews' ticket_id=post.id %}">
-            <button class="btn btn-outline-secondary">Créer une critique</button></a></p>
+            <p>{% if post.user.id != user.id %}
+            <a href="{% url 'response-reviews' ticket_id=post.id %}">
+            <button class="btn btn-outline-secondary">Créer une critique</button></a>
+            {% endif %} </p>
 
         </div>
 

@@ -10,7 +10,7 @@ def model_type(value):
 @register.simple_tag(takes_context=True)
 def get_ticket_display(context, user):
     if context['user'] == user:
-        return ''
+        return 'Vous'
     return user
 
 

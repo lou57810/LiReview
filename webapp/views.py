@@ -72,8 +72,6 @@ def flow_view(request):
     for user in UserFollows.objects.filter(user=request.user):
         followed_users_list.append(user.followed_user)
 
-
-
     reviews = Review.objects.filter(
         Q(user=request.user) | Q(user__in=followed_users_list))
 
@@ -153,9 +151,8 @@ def create_response_review(request, ticket_id):
             review.user = request.user
             # review.time_created = timezone.now()
             review.save()
+            print('user:', ticket.user)
             return redirect('flow')
-
-
 
 
 @login_required
@@ -221,7 +218,7 @@ def unfollow(request, user_id):
 @login_required
 def update_ticket(request, ticket_id):
     ticket_instance = get_object_or_404(Ticket, id=ticket_id)
-    print('id:', id)
+
     if request.method == "GET":
         ticket_form = forms.TicketForm(instance=ticket_instance)
         return render(request, 'webapp/update_ticket.html', context={'ticket_form': ticket_form})
@@ -239,11 +236,15 @@ def update_ticket(request, ticket_id):
 @login_required
 # def update_review(request, ticket_id, review_id):
 def update_review(request, review_id):
+
     review_instance = get_object_or_404(Review, id=review_id)
+    ticket_instance = get_object_or_404(Ticket, id=review_id)
+    print('rev_inst:', ticket_instance)
     # ticket_instance = get_object_or_404(Ticket, id=ticket_id)
     if request.method == "GET":
         review_form = forms.CreateReviewForm(instance=review_instance)
-        ticket_form = forms.TicketForm(request.POST, request.FILES)
+        ticket_form = forms.TicketForm(request.POST)
+
         return render(request, 'webapp/update_review.html', context={'ticket_form': ticket_form, 'review_form': review_form})
 
     if request.method == "POST":
@@ -258,6 +259,7 @@ def update_review(request, review_id):
             new_review = review_form.save(commit=False)
             new_review.user = request.user
             new_review.save()
+
             return redirect('view-posts')
 
 

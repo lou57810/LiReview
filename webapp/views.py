@@ -160,8 +160,9 @@ def create_response_review(request, ticket_id):
 
 @login_required
 def owner_post_view(request):
-    tickets = models.Ticket.objects.filter(user=request.user).order_by('-time_created')
     reviews = models.Review.objects.filter(user=request.user).order_by('-time_created')
+    tickets = models.Ticket.objects.filter(user=request.user).order_by('-time_created').exclude(review__in=reviews)
+
     ordered_tickets_and_reviews = sorted(chain(tickets, reviews),
                                          key=lambda instance: instance.time_created,
                                          reverse=True)

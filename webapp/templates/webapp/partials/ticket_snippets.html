@@ -8,7 +8,7 @@
             {% endif %}
         </div>
         <p>{% if post.user.id == user.id %}
-                {% get_poster_display post.user %}   avez demandé une critique
+                 {{ user }}
             {% else %}
                 {{ post.user.username }} a demandé une critique
             {% endif %}</p>

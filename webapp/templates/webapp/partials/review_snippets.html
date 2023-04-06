@@ -1,11 +1,10 @@
 {% load webapp_extras %}
 
 <div class="article_review">
-    REVIEW:
     {% if post.user.id == user.id %}
-        {% get_poster_display review.user %}  avez publié une critique :
+        {% get_review_display review.user %}  avez publié une critique :
     {% else %}
-        {{ post.user.username }} a publié une critique.
+        {{ post.user.username }} posted a review.
         <small>{{ review.time_created }}</small></p>
     {% endif %}
     <!----------------------------------------------------------------->
@@ -23,7 +22,7 @@
 
         <div class='inside_review'>
             <p>{% if post.user.id == user.id %}
-                    {% get_poster_display post.user %}   avez demandé une critique
+                     Ticket : {{ user }}
                 {% else %}
                     {{ post.user.username }} a demandé une critique
                 {% endif %}</p>

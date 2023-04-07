@@ -1,15 +1,30 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'flow.css' %}">
 
-<p><h4>Modifier une critique</h4></p>
+<div class="article">
+<p><h4>Modifier votre critique</h4></p>
 <br/><br/>
-        <form method="POST" action="{% url 'update-reviews' review_id=review_form.instance.id %}" enctype='multipart/form-data'>
+    <div class="article_review">
+
+        <div class="article_ticket">
+
+        <p>{{ ticket.user }}  <small>{{ ticket.time_created }}</small></p>
+            <p>{{ ticket.title }}</p>
+            <p>{{ ticket.description }}</p>
+                {% if ticket.image.url is not None %}
+                    <img src="{{ ticket.image.url }}">
+                {% endif %}
+        </div>
+        <form method="POST" action="{% url 'update-reviews' review_id=review_form.instance.id %}">
         <!--<form method="POST" action="{#% url 'update-reviews' ticket_id=ticket_form.instance.id %}" enctype='multipart/form-data'>-->
                 {% csrf_token %}
                 {{ review_form.as_p }}
-                {{ ticket_form.as_p }}
         <!--<button class="btn btn-secondary">Envoyer</button>-->
         <input type="submit">
         </form>
+        </div>
+</div>
 
 {% endblock %}

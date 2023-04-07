@@ -3,6 +3,10 @@
 
 <p><h4>Modifier un ticket</h4></p>
 <br/><br/>
+                    {% if ticket.image.url is not None %}
+                        <img src="{{ ticket.image.url }}">
+                    {% endif %}
+                </p>
 
                 <form method="POST" action="{% url 'update-tickets' ticket_id=ticket_form.instance.id %}" enctype='multipart/form-data'>
                         {{ ticket_form.as_p }}

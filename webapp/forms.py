@@ -39,7 +39,7 @@ class SignupForm(UserCreationForm):
 
 
 class TicketForm(ModelForm):
-    title = forms.CharField(max_length=30, label='Titre')
+    title = forms.CharField(max_length=60, label='Titre')
     image = forms.ImageField(required=False)
 
     class Meta:
@@ -62,7 +62,7 @@ class CreateReviewForm(ModelForm):
         ('5', 'Option 5'),
     ]
 
-    headline = forms.CharField(max_length=30, label='Titre')
+    headline = forms.CharField(max_length=60, label='Titre')
     rating = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, label="Note")
     body = forms.CharField(label="Commentaire", widget=forms.Textarea(attrs={}))
 
@@ -80,7 +80,7 @@ class CreateResponseReviewForm(forms.ModelForm):
         ('5', 'Option 5'),
     ]
 
-    headline = forms.CharField(max_length=30, label='Titre')
+    headline = forms.CharField(max_length=60, label='Titre')
     rating = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, label="Note")
     body = forms.CharField(label="Commentaire", widget=forms.Textarea(attrs={}))
 

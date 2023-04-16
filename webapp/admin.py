@@ -10,5 +10,3 @@ admin.site.register(User)
 admin.site.register(Ticket)
 admin.site.register(UserFollows, UserFollowsAdmin)
 admin.site.register(Review)
-
-

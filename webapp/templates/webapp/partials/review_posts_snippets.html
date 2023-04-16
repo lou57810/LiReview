@@ -2,7 +2,7 @@
 {% load static %}
 
 <div class="article_review">
-    REVIEW:
+
     {% if post.user.id == user.id %}
         {% get_review_display review.user %}  avez publié une critique :
     {% else %}
@@ -24,7 +24,7 @@
 
         <div class='inside_review'>
             <p>{% if post.ticket.user.id == user.id %}
-                    {% get_review_display post.user %}   avez demandé une critique
+                Ticket - {% get_review_display post.user %}
                 {% else %}
                     Ticket - {{ post.ticket.user.username }}
                 {% endif %}</p>

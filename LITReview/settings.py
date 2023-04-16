@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-from django.contrib.auth import get_user_model
+# from django.contrib.auth import get_user_model
 # from django.urls import reverse_lazy
 
 from pathlib import Path
@@ -23,7 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$_5i#y0vbsrlxtkr2n2a)_p@9=mif96_=gi)aue(303qi$of+t'
+SECRET_KEY =\
+    'django-insecure-$_5i#y0vbsrlxtkr2n2a)_p@9=mif96_=gi)aue(303qi$of+t'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -59,7 +60,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-                BASE_DIR.joinpath('templates'),     # Ajout fichiers rep templates
+                BASE_DIR.joinpath('templates'),  # Ajout fichiers rep templates
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -88,7 +89,8 @@ DATABASES = {
 
 
 # Password validation
-# https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
+# https://docs.djangoproject.com/en/4.1/ref/settings/
+# #auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
 ]
@@ -113,7 +115,8 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR, 'static']
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
+# https://docs.djangoproject.com/en/4.1/ref/settings/
+# #default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

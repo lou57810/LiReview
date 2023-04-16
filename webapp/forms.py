@@ -1,9 +1,8 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
-
-from django.forms import ModelForm, TextInput, PasswordInput
-from webapp.models import User, Ticket, Review, UserFollows
+from django.forms import ModelForm
+# from webapp.models import User
 
 from . import models
 
@@ -11,31 +10,38 @@ User = get_user_model()
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'placeholder': "Nom d'utilisateur"}),
+    username = forms.CharField(max_length=30, widget=forms.TextInput(
+        attrs={'placeholder': "Nom d'utilisateur"}),
                                label='')
     password = forms.CharField(max_length=30,
-                               widget=forms.PasswordInput(attrs={'placeholder': "Mot de passe"}),
+                               widget=forms.PasswordInput(
+                                   attrs={'placeholder': "Mot de passe"}),
                                label='')
 
 
-# ======================================= Logging ========================================
+# =========================== Logging ============================
 
 
 class SignupForm(UserCreationForm):
-    username = forms.CharField(label='', widget=forms.TextInput(attrs={'placeholder': 'Nom d\'utilisateur'}))
-    password1 = forms.CharField(label='', widget=forms.TextInput(attrs={'placeholder': 'Mot de passe'}))
-    password2 = forms.CharField(label='', widget=forms.TextInput(attrs={'placeholder': 'Confirmer Mot de passe'}))
+    username = forms.CharField(label='', widget=forms.TextInput(
+        attrs={'placeholder': 'Nom d\'utilisateur'}))
+    password1 = forms.CharField(label='', widget=forms.TextInput(
+        attrs={'placeholder': 'Mot de passe'}))
+    password2 = forms.CharField(label='', widget=forms.TextInput(
+        attrs={'placeholder': 'Confirmer Mot de passe'}))
 
-    # class Meta(UserCreationForm.Meta):
     class Meta:
-        # model = get_user_model()
         model = User
         fields = ['username', 'password1', 'password2']
-        widgets = {'username': forms.TextInput(attrs={'placeholder': 'Nom d\'utilisateur', }),
-                   'password1': forms.PasswordInput(attrs={'placeholder': "Mot de passe", }),
-                   'password2': forms.PasswordInput(attrs={'placeholder': "Confirmer Mot de passe"}), }
+        widgets = {'username': forms.TextInput(attrs={
+            'placeholder': 'Nom d\'utilisateur', }),
+            'password1': forms.PasswordInput(attrs={
+                'placeholder': "Mot de passe", }),
+            'password2': forms.PasswordInput(attrs={
+                'placeholder': "Confirmer Mot de passe"}), }
 
-# ============================================================================================
+
+# =================================================================
 
 
 class TicketForm(ModelForm):
@@ -45,12 +51,6 @@ class TicketForm(ModelForm):
     class Meta:
         model = models.Ticket
         fields = ['title', 'description', 'image']
-
-        """
-        def __init__(self, *args, **kwargs):
-            super(TicketForm, self).__init__(*args, **kwargs)
-            self.fields['image'].required = False
-        """
 
 
 class CreateReviewForm(ModelForm):
@@ -63,8 +63,10 @@ class CreateReviewForm(ModelForm):
     ]
 
     headline = forms.CharField(max_length=60, label='Titre')
-    rating = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, label="Note")
-    body = forms.CharField(label="Commentaire", widget=forms.Textarea(attrs={}))
+    rating = forms.ChoiceField(widget=forms.RadioSelect,
+                               choices=CHOICES, label="Note")
+    body = forms.CharField(label="Commentaire",
+                           widget=forms.Textarea(attrs={}), required=False)
 
     class Meta:
         model = models.Review
@@ -81,8 +83,10 @@ class CreateResponseReviewForm(forms.ModelForm):
     ]
 
     headline = forms.CharField(max_length=60, label='Titre')
-    rating = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, label="Note")
-    body = forms.CharField(label="Commentaire", widget=forms.Textarea(attrs={}))
+    rating = forms.ChoiceField(widget=forms.RadioSelect,
+                               choices=CHOICES, label="Note")
+    body = forms.CharField(label="Commentaire",
+                           widget=forms.Textarea(attrs={}))
 
     class Meta:
         model = models.Review
@@ -90,10 +94,12 @@ class CreateResponseReviewForm(forms.ModelForm):
 
 
 class FollowUsersForm(forms.Form):
-    followed_user = forms.CharField(label='', max_length=800,
-                                    widget=forms.TextInput(
-                                        attrs={'class': 'form-control', 'placeholder': "Nom d'utilisateur"}))
+    followed_user = forms.CharField(
+        label='', max_length=800, widget=forms.TextInput(
+            attrs={'class': 'form-control',
+                   'placeholder': "Nom d'utilisateur"}))
 
 
 class DeleteTicketForm(ModelForm):
-    delete_ticket = forms.BooleanField(widget=forms.HiddenInput, initial=True)
+    delete_ticket = forms.BooleanField(widget=forms.HiddenInput,
+                                       initial=True)

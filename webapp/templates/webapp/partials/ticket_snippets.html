@@ -1,27 +1,28 @@
 {% load webapp_extras %}
 
 <div class="article_ticket">
+    <div class="front_img">
+        {% if post.image.url is not None %}
+            <img src="{{ post.image.url }}">
+        {% endif %}
+    </div>
+        {% if post.user.id == user.id %}
+            {% get_ticket_display ticket.user %} avez publié un ticket
+        {% else %}
+            {{ post.user.username }} a demandé une critique
+        {% endif %}</p>
 
-        <div class="front_img">
-            {% if post.image.url is not None %}
-                <img src="{{ post.image.url }}">
-            {% endif %}
-        </div>
-        <p>{% if post.user.id == user.id %}
-                 {% get_ticket_display ticket.user %} avez publié un ticket
-            {% else %}
-                {{ post.user.username }} a demandé une critique
-            {% endif %}</p>
-                <p><small>{{ post.time_created }}</small></p>
+        <p><small>{{ post.time_created }}</small></p>
 
         <p>{{ post.title }}</p>
 
-        {{ post.description }}
-
-
+        {{ post.description }}</br></br>
 
         {% if not post.ticket %}
-        <p><a href="{% url 'response-reviews' ticket_id=post.id %}">
-        <button class="btn btn-outline-secondary">Créer une critique</button></a></p>
+            {% if user != post.ticket.user %}
+            <p><a href="{% url 'response-reviews' ticket_id=post.id %}">
+            <button class="btn btn-outline-secondary">Créer une critique</button></a></p>
+            {% endif %}
         {% endif %}
 </div>
+

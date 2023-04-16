@@ -19,14 +19,16 @@
     </br></br>
 
 <!------------------------------------ Feed ------------------------------------->
+
 <div class="article">
-    {{ page_post }}
     {% for post in page_post %}
 
         {% if post|model_type == 'Review' %}
-               {% include 'webapp/partials/review_snippets.html' with review=post %}
+           {% include 'webapp/partials/review_snippets.html' with review=post %}
+
         {% elif post|model_type == 'Ticket' %}
-                {% include 'webapp/partials/ticket_snippets.html' with ticket=post %}
+            {% include 'webapp/partials/ticket_snippets.html' with ticket=post %}
+
         {% endif %}
 
     {% endfor %}

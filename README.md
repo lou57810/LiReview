@@ -4,7 +4,7 @@
 ## Python programming language installation required.
 
 1. Installer git.
-2. Cloner le projet: `git@github.com:lou57810/LiReview.git`
+2. Cloner le projet depuis:  `https://github.com/lou57810/LiReview`
 3. Se placer dans le dossier LITReview et :
 4. Créer un environnement virtuel avec git bash: `python -m venv env` et
     toujours avec git bash: `source env/scripts/activate` pour l'activer.

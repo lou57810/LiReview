@@ -1,12 +1,24 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load webapp_extras %}
+
+{{ page_post }}
 {% block content %}
 <link rel="stylesheet" href="{% static 'flow.css' %}">
+
+<!--------- Confirmation suppression ------------->
+{% if messages %}
+    {% for msg in messages %}
+        <div class="alert alert-success">
+            <strong>{{ msg }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+<!-------------------------------------------------->
+
 <div class="article">
     <h4>Vos Posts</h4>
 
-    {{ page_post }}
     {% for post in page_post %}
         {% if post|model_type == 'Review' %}
                {% include 'webapp/partials/review_posts_snippets.html' with review=post ticket=post.ticket %}
@@ -32,7 +44,5 @@
         {% endif %}
     </span>
 </div>
-
-
 
 {% endblock %}

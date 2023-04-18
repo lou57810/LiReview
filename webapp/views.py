@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q
 
 from django.core.paginator import Paginator
-# from django.contrib import messages
+from django.contrib import messages
 
 
 # ================== LOGIN =========================================
@@ -227,7 +227,7 @@ def add_follower(request):
 
             new_entry = UserFollows(user=request.user, followed_user=pos)
             new_entry.save()
-
+            messages.success(request, "Followed_user ajouté.")
             return redirect('subscribers')
 
     return render(request, 'webapp/follow_users_form.html',
@@ -241,7 +241,7 @@ def unfollow(request, user_id):
     follower = UserFollows.objects.filter(
         Q(followed_user_id=user_id) & Q(user_id=request.user.id))
     follower.delete()
-    # messages.success(request, "Abonné supprimé.")
+    messages.success(request, "Abonné supprimé.")
     return redirect('subscribers')
 
 
@@ -264,7 +264,6 @@ def update_ticket(request, ticket_id):
 
 
 @login_required
-# def update_review(request, review_id):
 def update_review(request, review_id):
     review = Review.objects.get(id=review_id)
     ticket = Ticket.objects.get(id=review.ticket_id)
@@ -282,7 +281,6 @@ def update_review(request, review_id):
             new_review.user = request.user
             new_review.save()
             ticket.save()
-
             return redirect('view-posts')
 
 
@@ -290,11 +288,13 @@ def update_review(request, review_id):
 def delete_ticket(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
     ticket.delete()
-    return redirect('flow')
+    messages.success(request, "Ticket supprimé.")
+    return redirect('view-posts')
 
 
 @login_required
 def delete_review(request, review_id):
     review = get_object_or_404(Review, id=review_id)
     review.delete()
-    return redirect('flow')
+    messages.success(request, "Critique supprimée.")
+    return redirect('view-posts')

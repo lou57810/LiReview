@@ -5,7 +5,6 @@
     }
 
 body {
-
     width: 100%;
     height: 1000px;
     color: black;
@@ -97,34 +96,63 @@ text-align: left;
     border-radius: 5px;
     border: solid 1px #000;
 }
-/* =============================== */
+
 
 /* =========== page follow_users_form =============*/
 
-.follow_container .container_list {
+.follow_container form {
+    display: flex;
     width: 1200px;
-    height: 600px;
+    margin-left: 20px;
+}
 
-  }
+.follow_container .form-control {
+    margin-right: 20px;
+    width: 1100px;
+}
 
-.follow_container .container_list ul {
-    list-style-type: none;
-    padding-top: 15px;
+.follow_container form input {
+    width: 150px;
+}
+
+.follow_container .container_list .row {
+    display: flex;
+    flex-direction: row;
+    width: auto;
     height: 60px;
     border: 2px solid black;
-    }
+    text-align: left;
+    padding-left: 80px;
+    margin: 5px;
+  }
 
-.follow_container .container_list a {
-    margin-left: 900px;
+.container_list .row .name {
+    padding-top: 15px;
+    width: 950px;
+}
+
+.container_list .row .button {
+    padding-top: 15px;
+    width: 100px;
+    float: right;
+}
+
+.follow_container .container_list div button {
+    width: 150px;
+}
+
+.follow_container .container_list_bottom {
+    width: auto;
+    height: 600px;
 }
 
 .follow_container .container_list_bottom ul {
-    width: 1200px;
+    width: auto;
     text-align: left;
     padding-left: 80px;
     list-style-type: none;
     padding-top: 15px;
     height: 60px;
     border: 2px solid black;
+}
 
-  }

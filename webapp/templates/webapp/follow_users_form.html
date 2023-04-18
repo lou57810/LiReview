@@ -1,34 +1,43 @@
 {% extends 'base.html' %}
 {% block content %}
+
+<!------- Confirmation ajout ou suppression ------->
+{% if messages %}
+    {% for msg in messages %}
+        <div class="alert alert-success">
+            <strong>{{ msg }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+<!-------------------------------------------------->
+
     <p>Suivre d'autres utilisateurs</p></br></br>
-    <form  action="{% url 'subscribers' %}"  method="post" >
-        {% csrf_token %}
-        {{ followed_form }}
-        <input type="submit" value="Envoyer">
-        <!--<button class="btn btn-outline-primary btn-sm" value="submit">Envoyer</button>-->
-    </form></br></br>
+    <div class="follow_container">
+        <form  action="{% url 'subscribers' %}"  method="post" >
+            {% csrf_token %}
+            {{ followed_form }}
+            <input type="submit" value="Envoyer">
+            <!--<button class="btn btn-outline-primary btn-sm" value="submit">Envoyer</button>-->
+        </form>
+    </div></br></br>
 
     <!--<form method="get">-->
     <div class="follow_container">
+        <p>Abonnements</p>
         <div class="container_list">
             {% for instance in followed_users %}
-            <ul>
-                {{ instance.followed_user }} <a href=
-                             "{% url 'unfollow' user_id=instance.followed_user.id %}"><button>Désabonner</button></a>
-            </ul>
-            {% endfor %}
-            <div>
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="info"><h1>{{ message }}</h1></div>
-                {% endfor %}
-            {% endif %}
+            <div class="row">
+                <div class="name">{{ instance.followed_user }}</div>
+                <div class="button"><a href="{% url 'unfollow' user_id=instance.followed_user.id %}">
+                    <button>Désabonner</button></a></div>
             </div>
-        </div>
+            {% endfor %}
+        </div></br></br>
 
     </div>
 
     <div class="follow_container">
+        <p>Abonnés</p>
         <div class="container_list_bottom">
 
                 {% for user in follower_users %}

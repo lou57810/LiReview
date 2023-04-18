@@ -16,12 +16,9 @@
 }
 /* ===================================== */
 .container .article {
-    /*border: solid 1px #000;
-    border-color: green;*/
     width: 60%;
     margin: auto;
     max-width: 1000px;
-
     }
 
 .container .article .article_review {

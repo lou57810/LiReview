@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import ModelForm
-# from webapp.models import User
+
 
 from . import models
 
@@ -17,7 +17,6 @@ class LoginForm(forms.Form):
                                widget=forms.PasswordInput(
                                    attrs={'placeholder': "Mot de passe"}),
                                label='')
-
 
 # =========================== Logging ============================
 
@@ -39,7 +38,6 @@ class SignupForm(UserCreationForm):
                 'placeholder': "Mot de passe", }),
             'password2': forms.PasswordInput(attrs={
                 'placeholder': "Confirmer Mot de passe"}), }
-
 
 # =================================================================
 

@@ -1,7 +1,9 @@
 {% load webapp_extras %}
 {% load static %}
-<div class="article_ticket">
 
+
+
+<div class="article_ticket">
 
         <div class="front_img">
             {% if post.image.url is not None %}
@@ -24,6 +26,6 @@
                     "btn btn-secondary">Modifier</button></a>
 
             <a href="{% url 'delete-tickets' ticket_id=post.id %}"><button class=
-                    "btn btn-secondary">Supprimer</button></a>
+                    "btn btn-danger">Supprimer</button></a>
         </div>
 </div>

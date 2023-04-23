@@ -6,17 +6,13 @@
 <br/><br/>
 <p>Livre / Article</p></br></br>
         <form method="POST" action="{% url 'create-reviews' %}" enctype='multipart/form-data'>
-
-
+        <!-- enctype permet le téléversement des fichiers images -->
 
         {% csrf_token %}
         {{ ticket_form.as_p }}
         {{ review_form.as_p }}
 
-        <!--<button class="btn btn-secondary">Envoyer</button>-->
         <input type="submit">
         </form>
-<!--<p>Image</p>
-<button type="submit" >Télécharger fichier</button> -->
 
 {% endblock %}

@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from . import forms, models
 from webapp.models import Ticket, Review, User, UserFollows
-#
+
 from webapp.forms import FollowUsersForm
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
@@ -18,6 +18,8 @@ from django.contrib import messages
 
 
 # ================== LOGIN =========================================
+# Possibilité de création des views avec classes, vues génériques ou fonctions.
+
 
 class LoginPage(View):
     form_class = forms.LoginForm
@@ -65,33 +67,6 @@ def signup_page(request):
 
 
 # ==================== PAGES =========================
-
-def feed(request):
-    followed_users_list = []
-    for user in UserFollows.objects.filter(user=request.user):
-        followed_users_list.append(user.followed_user)
-
-    # return queryset of reviews
-    reviews = Review.objects.filter(
-        Q(user=request.user) | Q(user__in=followed_users_list))
-    reviews = reviews.annotate(content_type=Value('REVIEW', CharField()))
-
-    # return queryset of tickets
-    tickets = Ticket.objects.filter(
-        Q(user=request.user) | Q(user__in=followed_users_list))  # .exclude(review__in=reviews)
-    tickets = tickets.annotate(content_type=Value('REVIEW', CharField()))
-
-    posts = sorted(
-        chain(tickets, reviews),
-        key=lambda post: post.time_created, reverse=True)
-
-    paginator = Paginator(posts, 4)
-    page = request.GET.get('page')
-    page_post = paginator.get_page(page)
-
-    return render(request, 'webapp/flow.html',
-                  context={'page_post': page_post})
-
 
 @login_required
 def flow_view(request):

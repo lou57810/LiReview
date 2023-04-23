@@ -9,9 +9,9 @@
         {% get_review_display review.user %}  avez publié une critique :
     {% else %}
         {{ post.user.username }} a publié une critique.
-        <small>{{ review.time_created }}</small></p>
-    {% endif %}
 
+    {% endif %}
+        <small>{{ post.time_created }}</small></p>
      <p>{{ review.headline }}
 
      <p class="rating">
